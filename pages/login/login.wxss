@@ -1,0 +1,164 @@
+/* login.wxss */
+
+/* 引入字体 */
+@font-face {
+  font-family: 'HuiWenMingTi';
+  src: url('../../fonts/汇文明朝体.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+page {
+  background-color: #061429;
+}
+
+/* 容器样式 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #061429;
+  box-sizing: border-box;
+  padding: 0 40rpx;
+  position: relative;
+}
+
+/* 标题区样式 */
+.title-area {
+  width: 100%;
+  text-align: center;
+  padding-top: 60rpx;
+}
+
+.title {
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+  line-height: 1.4;
+}
+
+/* 文案区样式 */
+.content-area {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: calc(100% - 80rpx);
+  left: 40rpx;
+  top: 35%;
+  z-index: 5;
+}
+
+.main-title {
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #DBFFEC;
+  line-height: 1.2;
+  margin-bottom: 30rpx;
+  align-self: flex-start;
+}
+
+.sub-title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sub-title {
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #5CE821;
+  line-height: 1.8;
+  text-align: left;
+  display: block;
+}
+
+/* 操作按钮区样式 */
+.button-area {
+  position: fixed;
+  width: calc(100% - 80rpx);
+  display: flex;
+  justify-content: center;
+  left: 40rpx;
+  bottom: 240rpx;
+  z-index: 5;
+}
+
+.start-button {
+  width: 100%;
+  height: 90rpx;
+  background-color: #5CE821;
+  color: #2F0D77;
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 45rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 0 10rpx rgba(92, 232, 33, 0.3);
+  animation: glowing 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 10rpx rgba(92, 232, 33, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 20rpx rgba(92, 232, 33, 0.7);
+  }
+}
+
+.start-button:active {
+  background-color: #64DD17;
+  opacity: 0.9;
+  box-shadow: 0 0 15rpx rgba(92, 232, 33, 0.5);
+  animation: none;
+}
+
+/* 底部图标区样式 */
+.footer-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 130rpx;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #061429;
+  box-shadow: 0 -10rpx 25rpx -5rpx rgba(92, 232, 33, 0.12);
+  z-index: 10;
+}
+
+.footer-area::before {
+  content: '';
+  position: absolute;
+  top: -30rpx;
+  left: 0;
+  right: 0;
+  height: 30rpx;
+  background: linear-gradient(to bottom, rgba(92, 232, 33, 0), rgba(92, 232, 33, 0.05) 60%, rgba(92, 232, 33, 0.08));
+  opacity: 0.8;
+}
+
+.soup-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 10rpx;
+  filter: drop-shadow(0 0 5rpx rgba(92, 232, 33, 0.3));
+}
+
+.footer-text {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #FFFFFF;
+  text-shadow: 0 0 8rpx rgba(92, 232, 33, 0.2);
+} 

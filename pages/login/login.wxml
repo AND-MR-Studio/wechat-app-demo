@@ -1,0 +1,29 @@
+<!-- login.wxml -->
+<view class="container">
+  <!-- 标题区 -->
+  <view class="title-area">
+    <text class="title">一日汤</text>
+  </view>
+</view>
+
+<!-- 文案区 -->
+<view class="content-area" animation="{{backgroundAnimation}}">
+  <text class="main-title">最后是自己</text>
+  <view class="sub-title-container">
+    <text class="sub-title">一开始是动物，</text>
+    <text class="sub-title">然后是同类的尸体，</text>
+    <text class="sub-title">接着是同类，</text>
+    <text class="sub-title">最后是自己。</text>
+  </view>
+</view>
+
+<!-- 操作按钮区 -->
+<view class="button-area">
+  <button class="start-button" bindtap="onStartTap" animation="{{buttonAnimation}}">开始</button>
+</view>
+
+<!-- 底部图标区 -->
+<view class="footer-area">
+  <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
+  <text class="footer-text">喝汤</text>
+</view>

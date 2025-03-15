@@ -1,0 +1,56 @@
+<!-- main.wxml -->
+<view class="container">
+  <!-- 背景层 - 模糊的文字背景 -->
+  <view class="background-layer">
+    <view class="background-text">
+      <text>一开始是动物，</text>
+      <text>然后是同类的尸体，</text>
+      <text>接着是同类，</text>
+      <text>最后是自己。</text>
+    </view>
+  </view>
+
+  <!-- 顶部导航区 -->
+  <view class="nav-bar">
+    <view class="back-button" bindtap="navigateBack">
+      <view class="back-icon"></view>
+    </view>
+    <view class="title">一日汤</view>
+    <view class="more-button">
+      <view class="more-icon">
+        <view></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对话内容区 -->
+  <scroll-view class="chat-container" scroll-y="true" scroll-into-view="{{scrollToMessage}}" scroll-with-animation="true" enhanced="true" bounces="true">
+    <!-- 对话历史 -->
+    <block wx:for="{{messageList}}" wx:key="id">
+      <view class="message-item {{item.isUser ? 'user-message' : 'ai-message'}}" id="msg-{{item.id}}">
+        <text class="message-prefix">{{item.isUser ? '>' : '>'}}</text>
+        <text wx:if="{{item.isUser}}" class="message-text">{{item.content}}</text>
+        <text wx:else class="message-text typing-animation {{item.pauseClass}}">{{item.content}}</text>
+      </view>
+    </block>
+    
+    <!-- 底部占位，确保新消息可见 -->
+    <view class="message-bottom-space" id="message-bottom"></view>
+  </scroll-view>
+  
+  <!-- 输入操作区 -->
+  <view class="input-area">
+    <input class="message-input" 
+           placeholder="输入你的猜测..." 
+           placeholder-class="placeholder"
+           value="{{inputValue}}"
+           bindinput="onInputChange"
+           bindfocus="onInputFocus"
+           bindblur="onInputBlur"
+           confirm-type="send"
+           bindconfirm="sendMessage" />
+    <view class="send-button {{inputValue.trim() ? 'active' : 'inactive'}}" bindtap="sendMessage">
+      <view class="send-icon {{sending ? 'loading' : ''}}">?</view>
+    </view>
+  </view>
+</view> 
