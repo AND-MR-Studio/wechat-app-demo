@@ -3,5 +3,6 @@
   "projectname": "HFY-Miniprogram-Demo",
   "setting": {
     "compileHotReLoad": true
-  }
+  },
+  "libVersion": "trial"
 }
