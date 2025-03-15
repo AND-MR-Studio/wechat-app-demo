@@ -17,7 +17,8 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "compileHotReLoad": false
   },
   "condition": {},
   "editorSetting": {
