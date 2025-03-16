@@ -254,42 +254,38 @@ page {
   box-shadow: 0 0 8rpx rgba(92, 232, 33, 0.5);
 }
 
-/* 打字机动画效果 - 增强惊悚感 */
+/* 打字机动画效果 - 优化版本，减少回退次数，确保文本完整显示 */
 @keyframes typing-horror-1 {
   0% { max-width: 0; }
   40% { max-width: 40%; }
-  45% { max-width: 38%; } /* 回退效果 */
-  55% { max-width: 55%; }
+  42% { max-width: 39%; } /* 轻微回退效果 */
+  70% { max-width: 70%; }
   100% { max-width: 100%; } /* 确保动画结束后文本100%可见 */
 }
 
 @keyframes typing-horror-2 {
   0% { max-width: 0; }
   30% { max-width: 35%; }
-  33% { max-width: 33%; } /* 回退效果 */
-  60% { max-width: 70%; }
-  65% { max-width: 67%; } /* 回退效果 */
+  32% { max-width: 34%; } /* 轻微回退效果 */
+  65% { max-width: 70%; }
+  67% { max-width: 69%; } /* 轻微回退效果 */
   100% { max-width: 100%; } /* 确保动画结束后文本100%可见 */
 }
 
 @keyframes typing-horror-3 {
   0% { max-width: 0; }
   25% { max-width: 30%; }
-  30% { max-width: 25%; } /* 回退效果 */
-  50% { max-width: 50%; }
-  55% { max-width: 48%; } /* 回退效果 */
-  80% { max-width: 85%; }
+  27% { max-width: 29%; } /* 轻微回退效果 */
+  60% { max-width: 65%; }
   100% { max-width: 100%; } /* 确保动画结束后文本100%可见 */
 }
 
 @keyframes typing-horror-4 {
   0% { max-width: 0; }
   20% { max-width: 25%; }
-  23% { max-width: 23%; } /* 回退效果 */
-  40% { max-width: 45%; }
-  43% { max-width: 43%; } /* 回退效果 */
-  70% { max-width: 75%; }
-  73% { max-width: 73%; } /* 回退效果 */
+  22% { max-width: 24%; } /* 轻微回退效果 */
+  50% { max-width: 55%; }
+  52% { max-width: 54%; } /* 轻微回退效果 */
   100% { max-width: 100%; } /* 确保动画结束后文本100%可见 */
 }
 
@@ -320,6 +316,7 @@ page {
 .typing-animation {
   position: relative;
   display: inline-block;
+  max-width: 100% !important; /* 确保文本始终完整显示 */
 }
 
 /* 惊悚红色光标 */
@@ -399,6 +396,8 @@ page {
   color: #dddddd; /* 浅灰色文字 */
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* 文字阴影 */
   font-family: 'HuiWenMingTi', monospace;
+  width: 100%; /* 确保内容宽度充分 */
+  word-break: break-word; /* 确保长文本正确换行 */
 }
 
 .thinking-dots {
@@ -548,8 +547,9 @@ page {
   white-space: pre-wrap;
   flex: 1;
   letter-spacing: 1rpx;
-  width: auto;
-  max-width: 100%;
+  width: 100%;
+  max-width: 100% !important; /* 确保文本始终完整显示 */
+  overflow: visible !important; /* 确保文本不被截断 */
 }
 
 /* 仅显示光标的class，不影响文本宽度 */
@@ -557,6 +557,7 @@ page {
   position: relative;
   padding-right: 6rpx;
   text-shadow: 0 0 3rpx rgba(255, 68, 68, 0.2);
+  max-width: 100% !important; /* 确保文本始终完整显示 */
 }
 
 /* 使用伪元素创建仅光标效果 */
@@ -594,6 +595,8 @@ page {
   display: inline-block;
   position: relative;
   word-break: break-all;
+  max-width: 100% !important; /* 确保文本始终完整显示 */
+  width: 100%;
 }
 
 /* 不同的光标闪烁速度 */

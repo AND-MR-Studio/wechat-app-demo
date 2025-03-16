@@ -102,6 +102,40 @@ Page({
     
     // 尝试从本地存储加载对话记录
     this.loadMessageHistory();
+    
+    // 检查是否有未完成的打字效果，如果有则立即完成
+    this.completeAllTypingAnimations();
+    
+    // 页面显示时自动滚动到底部
+    this.setData({
+      scrollToMessage: 'message-bottom'
+    });
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+    console.log('对话页面隐藏');
+    
+    // 页面隐藏时，立即完成所有正在进行的打字效果
+    this.completeAllTypingAnimations();
+    
+    // 保存消息历史到本地存储
+    this.saveMessageHistory();
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+    console.log('对话页面卸载');
+    
+    // 页面卸载时，立即完成所有正在进行的打字效果
+    this.completeAllTypingAnimations();
+    
+    // 保存消息历史到本地存储
+    this.saveMessageHistory();
   },
 
   /**
@@ -344,47 +378,14 @@ Page({
     const isWelcomeMessage = message.isWelcomeMessage || message.id === 'init-1';
     
     // 为欢迎消息设置特殊参数
-    let maxBackspaceOccurrences = isWelcomeMessage ? 2 : 5; // 欢迎消息最多回退2次
-    let actualBackspaceChance = config.backspaceChance;
+    let maxBackspaceOccurrences = isWelcomeMessage ? 1 : 2; // 减少回退次数，欢迎消息最多回退1次，其他消息最多2次
+    let actualBackspaceChance = config.backspaceChance * 0.7; // 降低回退概率
     
-    // 如果是欢迎消息，大幅降低回退概率
-    if (isWelcomeMessage) {
-      actualBackspaceChance = 0.02; // 固定为2%的回退概率
-    } else {
-      // 非欢迎消息的正常逻辑
-      if (message.backspaceChanceModifier !== undefined) {
-        actualBackspaceChance += message.backspaceChanceModifier;
-      }
-      
-      // 检查是否是提示消息或"不确定"回复
-      const isHintMessage = message.isHint;
-      const isUncertainResponse = message.content && message.content.includes('不确定');
-      
-      // 如果是提示或"不确定"回复，增加回退概率
-      if (isHintMessage || isUncertainResponse) {
-        actualBackspaceChance = Math.max(0.3, actualBackspaceChance);
-      }
-      
-      // 检查是否是"是"或"否"的回复
-      const isYesResponse = message.content && message.content.includes('是。');
-      const isNoResponse = message.content && message.content.includes('否。');
-      
-      // 如果是"是"或"否"回复，降低回退概率
-      if (isYesResponse || isNoResponse) {
-        actualBackspaceChance = Math.min(0.15, actualBackspaceChance);
-      }
-      
-      // 检查是否是长文本（如欢迎语）
-      const isLongText = fullText.length > 30;
-      
-      // 如果是长文本，大幅降低回退概率
-      if (isLongText) {
-        actualBackspaceChance = Math.min(0.08, actualBackspaceChance);
-      }
+    // 对于提示消息，进一步降低回退概率
+    if (message.isHint) {
+      actualBackspaceChance *= 0.5;
+      maxBackspaceOccurrences = 1; // 提示消息最多回退1次
     }
-    
-    // 确保概率在合理范围内
-    actualBackspaceChance = Math.max(0.01, Math.min(0.5, actualBackspaceChance));
     
     // 定时器函数
     const typeNextChar = () => {
@@ -448,9 +449,9 @@ Page({
           
           // 对于提示和"不确定"回复，可能回退更多字符
           if (message.isHint || (message.content && message.content.includes('不确定'))) {
-            backspaceCount = Math.floor(Math.random() * 4) + 1; // 回退1-4个字符
+            backspaceCount = Math.floor(Math.random() * 2) + 1; // 减少回退字符数，回退1-2个字符
           } else {
-            backspaceCount = Math.floor(Math.random() * 2) + 1; // 回退1-2个字符
+            backspaceCount = 1; // 其他消息只回退1个字符
           }
           
           setTimeout(typeNextChar, Math.floor(Math.random() * 100) + 30);
@@ -468,6 +469,9 @@ Page({
         this.setData({
           messageList: updatedMessages
         });
+        
+        // 保存消息历史到本地存储
+        this.saveMessageHistory();
         return;
       }
       
@@ -504,6 +508,11 @@ Page({
         this.setData({
           messageList: updatedMessages
         });
+        
+        // 每添加10个字符保存一次消息历史，确保页面切换时不丢失内容
+        if (currentIndex % 10 === 0) {
+          this.saveMessageHistory();
+        }
       }
       
       // 设置下一个字符的打字延时
@@ -848,5 +857,30 @@ Page({
     
     // 清除本地存储的对话记录
     wx.removeStorageSync('messageHistory');
+  },
+  
+  /**
+   * 立即完成所有正在进行的打字效果
+   */
+  completeAllTypingAnimations: function() {
+    // 检查是否有正在进行的打字效果
+    const updatedMessages = [...this.data.messageList];
+    let hasChanges = false;
+    
+    updatedMessages.forEach((message) => {
+      if (message.typingInProgress) {
+        // 立即完成打字效果，显示完整内容
+        message.typingInProgress = false;
+        message.content = message.fullContent;
+        hasChanges = true;
+      }
+    });
+    
+    // 如果有更新，设置数据
+    if (hasChanges) {
+      this.setData({
+        messageList: updatedMessages
+      });
+    }
   }
 }) 
