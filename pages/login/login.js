@@ -280,5 +280,40 @@ Page({
       buttonAnimating: false,
       backgroundAnimating: false
     });
+  },
+
+  /**
+   * 处理home按钮点击事件
+   */
+  onHomeClick: function() {
+    console.log('首页按钮被点击');
+    // 在首页点击home按钮可以刷新页面或重新开始动画
+    this.setData({
+      showMainTitle: false,
+      showSubTitle: [false, false, false, false],
+      mainTitleTyping: false,
+      subTitleTyping: [false, false, false, false],
+      buttonVisible: false
+    });
+    
+    // 延迟一点，确保状态重置后再开始动画
+    setTimeout(() => {
+      this.startTextAnimation();
+    }, 300);
+  },
+  
+  /**
+   * 处理更多按钮点击事件
+   */
+  onMoreClick: function() {
+    console.log('更多按钮被点击');
+    // 这里可以添加显示菜单或其他功能的逻辑
+    wx.showActionSheet({
+      itemList: ['关于一日汤', '设置', '反馈问题'],
+      success: (res) => {
+        console.log(res.tapIndex);
+        // 根据点击的选项执行不同操作
+      }
+    });
   }
 }) 

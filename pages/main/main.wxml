@@ -1,5 +1,13 @@
 <!-- main.wxml -->
 <view class="container">
+  <!-- 使用统一导航栏组件 -->
+  <nav-bar 
+    title="一日汤" 
+    show-home="{{true}}" 
+    bind:homeclick="onHomeClick"
+    bind:moreclick="onMoreClick">
+  </nav-bar>
+  
   <!-- 背景层 - 模糊的文字背景 -->
   <view class="background-layer">
     <view class="background-text">
@@ -7,19 +15,6 @@
       <text>然后是同类的尸体，</text>
       <text>接着是同类，</text>
       <text>最后是自己。</text>
-    </view>
-  </view>
-
-  <!-- 顶部导航区 -->
-  <view class="nav-bar">
-    <view class="back-button" bindtap="navigateBack">
-      <view class="back-icon"></view>
-    </view>
-    <view class="title">一日汤</view>
-    <view class="more-button">
-      <view class="more-icon">
-        <view></view>
-      </view>
     </view>
   </view>
 

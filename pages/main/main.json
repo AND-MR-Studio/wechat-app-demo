@@ -4,5 +4,7 @@
   "navigationBarTextStyle": "white",
   "disableScroll": true,
   "navigationStyle": "custom",
-  "usingComponents": {}
+  "usingComponents": {
+    "nav-bar": "../components/nav-bar"
+  }
 } 

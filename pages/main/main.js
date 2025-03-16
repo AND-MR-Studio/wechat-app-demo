@@ -761,5 +761,92 @@ Page({
         speedRange: [30, 120]
       }
     });
+  },
+
+  /**
+   * 处理home按钮点击事件
+   */
+  onHomeClick: function() {
+    console.log('首页按钮被点击');
+    
+    // 保存对话记录
+    this.saveMessageHistory();
+    
+    // 返回首页
+    wx.reLaunch({
+      url: '/pages/login/login',
+      success: function() {
+        console.log('返回首页成功');
+      },
+      fail: function(error) {
+        console.error('返回首页失败', error);
+      }
+    });
+  },
+  
+  /**
+   * 处理更多按钮点击事件
+   */
+  onMoreClick: function() {
+    console.log('更多按钮被点击');
+    // 显示操作菜单
+    wx.showActionSheet({
+      itemList: ['重新开始', '保存对话', '分享汤面', '设置'],
+      success: (res) => {
+        console.log(res.tapIndex);
+        // 根据点击的选项执行不同操作
+        switch(res.tapIndex) {
+          case 0: // 重新开始
+            this.resetConversation();
+            break;
+          case 1: // 保存对话
+            this.saveMessageHistory();
+            wx.showToast({
+              title: '对话已保存',
+              icon: 'success'
+            });
+            break;
+          case 2: // 分享汤面
+            wx.showShareMenu({
+              withShareTicket: true,
+              menus: ['shareAppMessage', 'shareTimeline']
+            });
+            break;
+          case 3: // 设置
+            // 打开设置页面
+            break;
+        }
+      }
+    });
+  },
+  
+  /**
+   * 重置对话
+   */
+  resetConversation: function() {
+    // 重置对话到初始状态
+    const initialMessage = {
+      id: 'init-' + Date.now(),
+      content: '', // 初始为空，以便启用打字机效果
+      fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
+      isUser: false,
+      pauseClass: 'pause-animation-2',
+      isLatest: true,
+      typingInProgress: true,
+      isWelcomeMessage: true
+    };
+    
+    this.setData({
+      messageList: [initialMessage],
+      wrongGuessCount: 0
+    }, () => {
+      // 启动欢迎消息的打字机效果
+      setTimeout(() => {
+        this.simulateTypewriter(initialMessage.id, initialMessage.fullContent);
+      }, 500);
+    });
+    
+    // 清除本地存储的对话记录
+    wx.removeStorageSync('messageHistory');
   }
 }) 
