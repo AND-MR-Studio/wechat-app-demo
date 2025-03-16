@@ -203,16 +203,10 @@ page {
 
 /* 消息文本样式 */
 .message-text {
-  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
-  font-size: 30rpx;
-  font-weight: 400;
-  line-height: 1.6;
-  word-wrap: break-word;
+  word-break: break-all;
   white-space: pre-wrap;
-  flex: 1;
-  letter-spacing: 1rpx;
-  width: auto;
-  max-width: 100%;
+  line-height: 1.5;
+  font-family: 'HuiWenMingTi', monospace;
 }
 
 /* 用户消息样式 */
@@ -322,29 +316,89 @@ page {
   100% { content: '...'; }
 }
 
+/* 打字机效果基础样式 */
 .typing-animation {
-  display: inline-block;
-  overflow: hidden;
-  white-space: pre-wrap;
   position: relative;
-  padding-right: 6rpx;
-  text-shadow: 0 0 3rpx rgba(255, 68, 68, 0.2);
-  max-width: 0;
-  animation-fill-mode: forwards !important; /* 确保动画结束状态保持 */
+  display: inline-block;
 }
 
-/* 使用伪元素创建更好看的光标 */
+/* 惊悚红色光标 */
 .typing-animation::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 30%;
-  height: 40%;
-  width: 4rpx;
-  background-color: #FF4444;
-  border-radius: 1rpx;
-  box-shadow: 0 0 5rpx rgba(255, 68, 68, 0.6), 0 0 8rpx rgba(255, 0, 0, 0.4);
-  animation: cursor-blink-horror 1.2s step-end infinite;
+  content: '|';
+  position: relative;
+  display: inline-block;
+  color: #ff0000; /* 红色光标 */
+  font-weight: bold;
+  margin-left: 2rpx;
+  font-size: inherit;
+  animation: horror-cursor-blink 0.8s infinite;
+}
+
+/* 红色光标动画 */
+@keyframes horror-cursor-blink {
+  0%, 100% { 
+    opacity: 1; 
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+  }
+  50% { 
+    opacity: 0.3; 
+  }
+}
+
+/* 故障效果 - 文字颤抖 */
+.text-glitch {
+  animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  text-shadow: 
+    1px 0 #ff0000, -1px 0 #0000ff,
+    0 0 5px rgba(255,255,255,0.4),
+    0 0 10px rgba(255,0,0,0.4);
+}
+
+/* 故障动画 */
+@keyframes glitch-anim {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+/* 不同的光标闪烁效果 */
+.pause-animation-1::after { 
+  animation-duration: 0.7s; 
+  animation-timing-function: steps(2, end);
+}
+.pause-animation-2::after { 
+  animation-duration: 0.8s; 
+  animation-timing-function: cubic-bezier(0.1, 0.7, 1.0, 0.1);
+}
+.pause-animation-3::after { 
+  animation-duration: 0.9s; 
+  animation-timing-function: ease-in-out;
+}
+.pause-animation-4::after { 
+  animation-duration: 1.0s; 
+  animation-timing-function: cubic-bezier(0.3, 0.1, 0.7, 1.0);
+}
+
+/* AI消息内容 - 惊悚风格 */
+.ai-content {
+  color: #dddddd; /* 浅灰色文字 */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* 文字阴影 */
+  font-family: 'HuiWenMingTi', monospace;
 }
 
 .thinking-dots {
@@ -361,31 +415,6 @@ page {
   animation: thinking-dots 1.5s infinite;
   color: #FF4444;
   opacity: 0.8;
-}
-
-/* 随机停顿动画 - 增强惊悚效果 */
-.pause-animation-1 { 
-  animation-name: typing-horror-1;
-  animation-duration: 2.0s;
-  animation-timing-function: steps(18, end);
-}
-
-.pause-animation-2 { 
-  animation-name: typing-horror-2;
-  animation-duration: 2.5s;
-  animation-timing-function: steps(15, end);
-}
-
-.pause-animation-3 { 
-  animation-name: typing-horror-3;
-  animation-duration: 3.0s;
-  animation-timing-function: steps(12, end);
-}
-
-.pause-animation-4 { 
-  animation-name: typing-horror-4;
-  animation-duration: 3.5s;
-  animation-timing-function: steps(10, end);
 }
 
 /* 底部占位 */
@@ -542,4 +571,132 @@ page {
   border-radius: 1rpx;
   box-shadow: 0 0 5rpx rgba(255, 68, 68, 0.6), 0 0 8rpx rgba(255, 0, 0, 0.4);
   animation: cursor-blink-horror 1.2s step-end infinite;
+}
+
+/* 光标样式 */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em; /* 与字体大小一致 */
+  background-color: #333;
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 打字机效果的容器 */
+.message-wrapper {
+  display: inline-block;
+  position: relative;
+  word-break: break-all;
+}
+
+/* 不同的光标闪烁速度 */
+.pause-animation-1::after { animation-duration: 0.7s; }
+.pause-animation-2::after { animation-duration: 0.8s; }
+.pause-animation-3::after { animation-duration: 0.9s; }
+.pause-animation-4::after { animation-duration: 1.0s; }
+
+/* 确保多行文本在容器内正确换行 */
+.ai-content, .user-content {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/* 额外的故障效果 - 水平线 */
+.text-glitch::before {
+  content: attr(data-text);
+  position: absolute;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: 0;
+  background: rgba(255, 0, 0, 0.2);
+  overflow: hidden;
+  animation: glitch-line 2s linear infinite;
+  z-index: -1;
+}
+
+@keyframes glitch-line {
+  0% {
+    top: 0;
+    height: 0;
+  }
+  5% {
+    top: 0;
+    height: 1px;
+  }
+  10% {
+    top: 5px;
+    height: 0;
+  }
+  20% {
+    top: auto;
+    bottom: 15px;
+    height: 1px;
+  }
+  25% {
+    bottom: 10px;
+    height: 0;
+  }
+  75% {
+    height: 0;
+  }
+  80% {
+    top: 40%;
+    height: 1px;
+  }
+  85% {
+    height: 0;
+  }
+  100% {
+    height: 0;
+  }
+}
+
+/* 提示消息样式 - 绿色 */
+.hint-content {
+  color: #5CE821 !important; /* 绿色提示文本 */
+  text-shadow: 0 0 5px rgba(92, 232, 33, 0.5) !important; /* 绿色发光效果 */
+}
+
+/* 提示消息中的文本也应该是绿色 */
+.hint-content .message-text {
+  color: #5CE821 !important;
+  text-shadow: 0 0 5px rgba(92, 232, 33, 0.5) !important;
+}
+
+/* 提示消息的打字机光标也应为绿色 */
+.hint-content .typing-animation::after {
+  content: '|';
+  color: #5CE821 !important; /* 绿色光标 */
+  text-shadow: 0 0 5px #5CE821, 0 0 10px #5CE821 !important;
+}
+
+/* 提示消息的故障效果也应为绿色 */
+.hint-content .text-glitch {
+  text-shadow: 
+    1px 0 #5CE821, -1px 0 #5CE821,
+    0 0 5px rgba(92, 232, 33, 0.4),
+    0 0 10px rgba(92, 232, 33, 0.4) !important;
+}
+
+/* 绿色光标闪烁动画 */
+@keyframes green-cursor-blink {
+  0%, 100% { 
+    opacity: 1; 
+    text-shadow: 0 0 5px #5CE821, 0 0 10px #5CE821;
+  }
+  50% { 
+    opacity: 0.3; 
+  }
+}
+
+/* 提示消息光标使用绿色动画 */
+.hint-content .typing-animation::after {
+  animation-name: green-cursor-blink !important;
 } 

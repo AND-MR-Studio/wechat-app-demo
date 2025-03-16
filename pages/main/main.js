@@ -16,10 +16,13 @@ Page({
     messageList: [
       {
         id: 'init-1',
-        content: '欢迎来到海龟汤游戏。\n你需要通过提问来猜测谜底，\n我只会回答"是"、"否"或"不确定"。',
+        content: '', // 初始为空，以便启用打字机效果
+        fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测谜底，\n> 我只会回答"是"、"否"或"不确定"。',
         isUser: false,
         pauseClass: 'pause-animation-2',
-        isLatest: true
+        isLatest: true,
+        typingInProgress: true, // 标记为打字中
+        isWelcomeMessage: true  // 标记为欢迎消息
       }
     ],
     // 输入框的值
@@ -44,7 +47,15 @@ Page({
       "提示：汤底可能与某种特殊的食物有关。",
       "提示：试着从不同的角度解读'最后是自己'。",
       "提示：汤底可能与某种特殊的食物习惯有关。"
-    ]
+    ],
+    // 打字机效果控制相关
+    typingConfig: {
+      enabled: true,         // 是否启用打字机效果
+      errorRate: 0.2,        // 打字错误率（0-1之间）
+      backspaceChance: 0.3,  // 回退几率
+      glitchChance: 0.15,    // 故障效果几率
+      speedRange: [50, 150]  // 打字速度范围(ms)
+    }
   },
 
   /**
@@ -71,6 +82,15 @@ Page({
     const logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
+    
+    // 启动欢迎消息的打字机效果
+    setTimeout(() => {
+      // 获取欢迎消息
+      const initialMessage = this.data.messageList[0];
+      if (initialMessage && initialMessage.typingInProgress) {
+        this.simulateTypewriter(initialMessage.id, initialMessage.fullContent);
+      }
+    }, 500); // 延迟一下以确保页面已加载
   },
 
   /**
@@ -230,11 +250,34 @@ Page({
    * 添加消息到列表
    */
   addMessage: function (message) {
-    // 如果是AI消息，先移除之前所有AI消息的isLatest标记
+    // 处理">前缀"
+    if (!message.isUser && message.content) {
+      if (!message.content.trim().startsWith('>')) {
+        message.content = message.content.split('\n').map(line => 
+          line.trim() ? '> ' + line : line
+        ).join('\n');
+      }
+    }
+    
+    // 标记原始完整内容用于打字机效果
+    if (!message.isUser) {
+      message.fullContent = message.content;
+      // 如果启用打字机效果，初始设置为空
+      if (this.data.typingConfig.enabled) {
+        message.content = '';
+        message.typingInProgress = true;
+      }
+    }
+    
+    // 如果是AI消息，先移除之前所有AI消息的isLatest标记和typingInProgress
     if (!message.isUser) {
       const updatedList = this.data.messageList.map(item => {
         if (!item.isUser) {
-          return { ...item, isLatest: false };
+          return { 
+            ...item, 
+            isLatest: false,
+            typingInProgress: false 
+          };
         }
         return item;
       });
@@ -248,6 +291,11 @@ Page({
         messageList: messageList,
         scrollToMessage: `msg-${message.id}`
       }, () => {
+        // 如果启用打字机效果，开始模拟打字
+        if (this.data.typingConfig.enabled && message.typingInProgress) {
+          this.simulateTypewriter(message.id, message.fullContent);
+        }
+        
         // 保存对话记录
         this.saveMessageHistory();
       });
@@ -263,6 +311,220 @@ Page({
         this.saveMessageHistory();
       });
     }
+  },
+
+  /**
+   * 模拟打字机效果
+   * @param {string|number} messageId 消息ID
+   * @param {string} fullText 完整文本内容
+   */
+  simulateTypewriter: function(messageId, fullText) {
+    let currentIndex = 0;
+    let currentText = '';
+    let backspacing = false;
+    let backspaceCount = 0;
+    let messageIndex = -1;
+    let backspaceOccurrences = 0; // 记录回退发生的次数
+    
+    // 找到消息在列表中的索引
+    this.data.messageList.forEach((msg, index) => {
+      if (msg.id === messageId) {
+        messageIndex = index;
+      }
+    });
+    
+    if (messageIndex === -1) return;
+    
+    const config = this.data.typingConfig;
+    
+    // 获取消息对象
+    const message = this.data.messageList[messageIndex];
+    
+    // 检查是否是欢迎消息
+    const isWelcomeMessage = message.isWelcomeMessage || message.id === 'init-1';
+    
+    // 为欢迎消息设置特殊参数
+    let maxBackspaceOccurrences = isWelcomeMessage ? 2 : 5; // 欢迎消息最多回退2次
+    let actualBackspaceChance = config.backspaceChance;
+    
+    // 如果是欢迎消息，大幅降低回退概率
+    if (isWelcomeMessage) {
+      actualBackspaceChance = 0.02; // 固定为2%的回退概率
+    } else {
+      // 非欢迎消息的正常逻辑
+      if (message.backspaceChanceModifier !== undefined) {
+        actualBackspaceChance += message.backspaceChanceModifier;
+      }
+      
+      // 检查是否是提示消息或"不确定"回复
+      const isHintMessage = message.isHint;
+      const isUncertainResponse = message.content && message.content.includes('不确定');
+      
+      // 如果是提示或"不确定"回复，增加回退概率
+      if (isHintMessage || isUncertainResponse) {
+        actualBackspaceChance = Math.max(0.3, actualBackspaceChance);
+      }
+      
+      // 检查是否是"是"或"否"的回复
+      const isYesResponse = message.content && message.content.includes('是。');
+      const isNoResponse = message.content && message.content.includes('否。');
+      
+      // 如果是"是"或"否"回复，降低回退概率
+      if (isYesResponse || isNoResponse) {
+        actualBackspaceChance = Math.min(0.15, actualBackspaceChance);
+      }
+      
+      // 检查是否是长文本（如欢迎语）
+      const isLongText = fullText.length > 30;
+      
+      // 如果是长文本，大幅降低回退概率
+      if (isLongText) {
+        actualBackspaceChance = Math.min(0.08, actualBackspaceChance);
+      }
+    }
+    
+    // 确保概率在合理范围内
+    actualBackspaceChance = Math.max(0.01, Math.min(0.5, actualBackspaceChance));
+    
+    // 定时器函数
+    const typeNextChar = () => {
+      // 如果已完成或消息不存在，停止打字
+      if (!this.data.messageList[messageIndex] || 
+          !this.data.messageList[messageIndex].typingInProgress) {
+        return;
+      }
+      
+      // 如果正在回退
+      if (backspacing && currentText.length > 0) {
+        // 删除最后一个字符
+        currentText = currentText.substring(0, currentText.length - 1);
+        backspaceCount--;
+        
+        // 更新消息内容
+        const updatedMessages = [...this.data.messageList];
+        updatedMessages[messageIndex].content = currentText;
+        
+        this.setData({
+          messageList: updatedMessages
+        });
+        
+        // 如果回退完成
+        if (backspaceCount <= 0) {
+          backspacing = false;
+        }
+        
+        // 继续回退或打字
+        setTimeout(typeNextChar, Math.floor(Math.random() * 100) + 30);
+        return;
+      }
+      
+      // 随机决定是否触发故障
+      const triggerGlitch = !isWelcomeMessage && Math.random() < config.glitchChance;
+      
+      // 随机决定是否触发打字错误和回退
+      if (!backspacing && currentIndex > 0 && 
+          backspaceOccurrences < maxBackspaceOccurrences) {
+          
+        // 欢迎消息特殊处理 - 只在特定位置回退
+        if (isWelcomeMessage) {
+          // 只在句子结束处考虑回退
+          const isEndOfSentence = fullText.charAt(currentIndex - 1) === '。' || 
+                                 fullText.charAt(currentIndex - 1) === '，' ||
+                                 fullText.charAt(currentIndex - 1) === '\n';
+          
+          if (isEndOfSentence && Math.random() < actualBackspaceChance) {
+            backspacing = true;
+            backspaceOccurrences++;
+            backspaceCount = 1; // 欢迎消息只回退1个字符
+            
+            setTimeout(typeNextChar, Math.floor(Math.random() * 100) + 30);
+            return;
+          }
+        } 
+        // 非欢迎消息的正常回退逻辑
+        else if (Math.random() < actualBackspaceChance) {
+          backspacing = true;
+          backspaceOccurrences++;
+          
+          // 对于提示和"不确定"回复，可能回退更多字符
+          if (message.isHint || (message.content && message.content.includes('不确定'))) {
+            backspaceCount = Math.floor(Math.random() * 4) + 1; // 回退1-4个字符
+          } else {
+            backspaceCount = Math.floor(Math.random() * 2) + 1; // 回退1-2个字符
+          }
+          
+          setTimeout(typeNextChar, Math.floor(Math.random() * 100) + 30);
+          return;
+        }
+      }
+      
+      // 打字完成
+      if (currentIndex >= fullText.length) {
+        // 标记打字完成
+        const updatedMessages = [...this.data.messageList];
+        updatedMessages[messageIndex].typingInProgress = false;
+        updatedMessages[messageIndex].content = fullText;
+        
+        this.setData({
+          messageList: updatedMessages
+        });
+        return;
+      }
+      
+      // 添加下一个字符
+      currentText += fullText.charAt(currentIndex);
+      currentIndex++;
+      
+      // 如果触发故障，添加故障标记
+      if (triggerGlitch) {
+        const updatedMessages = [...this.data.messageList];
+        updatedMessages[messageIndex].content = currentText;
+        updatedMessages[messageIndex].glitching = true;
+        
+        this.setData({
+          messageList: updatedMessages
+        });
+        
+        // 短暂显示故障效果后恢复
+        setTimeout(() => {
+          const currentMessages = [...this.data.messageList];
+          if (currentMessages[messageIndex]) {
+            currentMessages[messageIndex].glitching = false;
+            
+            this.setData({
+              messageList: currentMessages
+            });
+          }
+        }, 150);
+      } else {
+        // 正常更新文本
+        const updatedMessages = [...this.data.messageList];
+        updatedMessages[messageIndex].content = currentText;
+        
+        this.setData({
+          messageList: updatedMessages
+        });
+      }
+      
+      // 设置下一个字符的打字延时
+      let typingSpeed = Math.floor(Math.random() * 
+                       (config.speedRange[1] - config.speedRange[0])) + 
+                       config.speedRange[0];
+      
+      // 欢迎消息稍微加快打字速度
+      if (isWelcomeMessage) {
+        typingSpeed = Math.max(15, typingSpeed - 25); // 减少25ms，但不低于15ms
+      }
+      // 对于提示和"不确定"回复，可能打字速度更慢，表示思考
+      else if (message.isHint || (message.content && message.content.includes('不确定'))) {
+        typingSpeed += Math.floor(Math.random() * 50); // 增加0-50ms的延迟
+      }
+      
+      setTimeout(typeNextChar, typingSpeed);
+    };
+    
+    // 开始打字
+    typeNextChar();
   },
 
   /**
@@ -292,6 +554,7 @@ Page({
       // 简单的回复逻辑，实际应用中应该调用AI服务
       let response = '';
       let isCorrectGuess = false;
+      let backspaceChanceModifier = 0; // 回退概率修饰符
       
       // 简单的关键词匹配
       const question = userQuestion.toLowerCase();
@@ -299,25 +562,34 @@ Page({
       if (question.includes('吃') || question.includes('食物')) {
         response = '是。';
         isCorrectGuess = true;
+        backspaceChanceModifier = -0.2; // 降低回退概率
       } else if (question.includes('人') || question.includes('自己')) {
         response = '是。';
         isCorrectGuess = true;
+        backspaceChanceModifier = -0.2; // 降低回退概率
       } else if (question.includes('动物')) {
         response = '是。';
         isCorrectGuess = true;
+        backspaceChanceModifier = -0.2; // 降低回退概率
       } else if (question.includes('谜底')) {
         response = '不是。';
+        backspaceChanceModifier = -0.15; // 稍微降低回退概率
       } else {
         // 随机回复
         const responses = ['是。', '否。', '不确定。'];
         response = responses[Math.floor(Math.random() * responses.length)];
         
         // 如果回复是"否"或"不确定"，增加错误计数
-        if (response === '否。' || response === '不确定。') {
+        if (response === '否。') {
           this.increaseWrongGuessCount();
+          backspaceChanceModifier = -0.15; // 稍微降低回退概率
+        } else if (response === '不确定。') {
+          this.increaseWrongGuessCount();
+          backspaceChanceModifier = 0.1; // 提高回退概率，表示思考
         } else {
           // 如果回复是"是"，重置错误计数
           this.resetWrongGuessCount();
+          backspaceChanceModifier = -0.2; // 降低回退概率
         }
       }
       
@@ -333,9 +605,12 @@ Page({
       // 创建AI消息对象
       const aiMessage = {
         id: Date.now(),
-        content: response,
+        content: '> ' + response, // 确保回复以">"开头
+        fullContent: '> ' + response, // 保存完整内容用于打字机效果
         isUser: false,
-        pauseClass: pauseClass
+        pauseClass: pauseClass,
+        typingInProgress: this.data.typingConfig.enabled, // 标记打字进行中
+        backspaceChanceModifier: backspaceChanceModifier // 添加回退概率修饰符
       };
       
       // 将AI消息添加到消息列表
@@ -423,10 +698,13 @@ Page({
       // 创建提示消息对象
       const hintMessage = {
         id: Date.now() + 100, // 确保ID不重复
-        content: hint,
+        content: '> ' + hint, // 确保提示也以">"开头
+        fullContent: '> ' + hint, // 保存完整内容用于打字机效果
         isUser: false,
         pauseClass: pauseClass,
-        isHint: true
+        isHint: true, // 标记为提示消息
+        typingInProgress: this.data.typingConfig.enabled, // 标记打字进行中
+        backspaceChanceModifier: 0.15 // 提示消息增加回退概率，表示思考
       };
       
       // 延迟一段时间后显示提示，让用户先看到AI的回复
@@ -452,12 +730,35 @@ Page({
       source: 'url("https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf")',
       success: (res) => {
         console.log('字体加载成功', res);
+        // 应用惊悚风格
+        this.applyHorrorStyle();
       },
       fail: (err) => {
         console.log('字体加载失败', err);
       },
       complete: (res) => {
         console.log('字体加载完成', res);
+      }
+    });
+  },
+  
+  /**
+   * 应用惊悚风格
+   * 确保打字机效果和光标样式符合惊悚风格
+   */
+  applyHorrorStyle: function() {
+    console.log('应用惊悚风格');
+    
+    // 微信小程序不支持直接操作样式
+    this.setData({
+      horrorStyleApplied: true,
+      // 启用打字机效果配置
+      typingConfig: {
+        enabled: true,
+        errorRate: 0.15,
+        backspaceChance: 0.2, // 基础回退概率，会根据消息类型调整
+        glitchChance: 0.2,
+        speedRange: [30, 120]
       }
     });
   }
