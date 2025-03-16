@@ -4,26 +4,30 @@
   <view class="title-area">
     <text class="title">一日汤</text>
   </view>
-</view>
 
-<!-- 文案区 -->
-<view class="content-area" animation="{{backgroundAnimation}}">
-  <text class="main-title">最后是自己</text>
-  <view class="sub-title-container">
-    <text class="sub-title">一开始是动物，</text>
-    <text class="sub-title">然后是同类的尸体，</text>
-    <text class="sub-title">接着是同类，</text>
-    <text class="sub-title">最后是自己。</text>
+  <!-- 文案区 -->
+  <view class="content-area" animation="{{backgroundAnimation}}">
+    <!-- 主标题只有在showMainTitle为true时才显示 -->
+    <text wx:if="{{showMainTitle}}" class="main-title {{mainTitleTyping ? 'typing-animation' : ''}}" data-index="0">最后是自己</text>
+
+    <view class="sub-title-container">
+      <!-- 副标题只有在对应的showSubTitle数组项为true时才显示 -->
+      <text wx:if="{{showSubTitle[0]}}" class="sub-title {{subTitleTyping[0] ? 'typing-animation' : ''}}" data-index="1">一开始是动物，</text>
+      <text wx:if="{{showSubTitle[1]}}" class="sub-title {{subTitleTyping[1] ? 'typing-animation' : ''}}" data-index="2">然后是同类的尸体，</text>
+      <text wx:if="{{showSubTitle[2]}}" class="sub-title {{subTitleTyping[2] ? 'typing-animation' : ''}}" data-index="3">接着是同类，</text>
+      <text wx:if="{{showSubTitle[3]}}" class="sub-title {{subTitleTyping[3] ? 'typing-animation' : ''}}" data-index="4">最后是自己。</text>
+    </view>
   </view>
-</view>
 
-<!-- 操作按钮区 -->
-<view class="button-area">
-  <button class="start-button" bindtap="onStartTap" animation="{{buttonAnimation}}">开始</button>
-</view>
+  <!-- 操作按钮区 -->
+  <view class="button-area">
+    <button wx:if="{{buttonVisible}}" class="start-button" bindtap="onStartTap" animation="{{buttonAnimation}}">开始喝汤</button>
+  </view>
 
-<!-- 底部图标区 -->
-<view class="footer-area">
-  <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
-  <text class="footer-text">喝汤</text>
+  <!-- 底部图标区 -->
+  <view class="footer-area">
+    <view class="steam-effect"></view>
+    <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
+    <text class="footer-text">喝汤</text>
+  </view>
 </view>

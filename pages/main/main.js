@@ -34,16 +34,16 @@ Page({
     wrongGuessCount: 0,
     // 提示列表
     hintList: [
-      "提示：试着从题目中的关键词入手思考。",
-      "提示：这个谜题与食物链有关。",
+      "提示：试着从汤面的关键词入手思考。",
+      "提示：汤底与食物链有关。",
       "提示：想想人与动物的关系。",
-      "提示：考虑一下'自己'在这个谜题中代表什么。",
-      "提示：这个谜题描述的可能是一个进食的过程。",
+      "提示：考虑一下'自己'在汤面中代表什么。",
+      "提示：汤面描述的可能是一个进食的过程。",
       "提示：'同类'这个词很重要，它暗示了什么？",
       "提示：想象一下从动物到人的转变过程。",
-      "提示：这个谜题可能与某种特殊的食物有关。",
+      "提示：汤底可能与某种特殊的食物有关。",
       "提示：试着从不同的角度解读'最后是自己'。",
-      "提示：谜底可能与某种特殊的食物习惯有关。"
+      "提示：汤底可能与某种特殊的食物习惯有关。"
     ]
   },
 
@@ -51,11 +51,13 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    // 可以从options中获取传递过来的海龟汤数据
-    // 或者从服务器获取
+    console.log('对话页面加载');
     
     // 加载自定义字体
-    this.loadFont();
+    this.loadCustomFont();
+    
+    // 可以从options中获取传递过来的海龟汤数据
+    // 或者从服务器获取
     
     // 尝试从本地存储加载对话记录
     this.loadMessageHistory();
@@ -439,18 +441,23 @@ Page({
   },
 
   /**
-   * 加载字体
+   * 加载自定义字体
    */
-  loadFont: function() {
+  loadCustomFont: function() {
+    console.log('开始加载字体');
+    
+    // 尝试加载自定义字体
     wx.loadFontFace({
-      global: true,
       family: 'HuiWenMingTi',
-      source: 'url("../../fonts/汇文明朝体.otf")',
-      success: function(res) {
+      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf")',
+      success: (res) => {
         console.log('字体加载成功', res);
       },
-      fail: function(err) {
+      fail: (err) => {
         console.log('字体加载失败', err);
+      },
+      complete: (res) => {
+        console.log('字体加载完成', res);
       }
     });
   }

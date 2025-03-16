@@ -1,7 +1,16 @@
 /* main.wxss */
 
+/* 引入字体 */
+@font-face {
+  font-family: 'HuiWenMingTi';
+  src: url('https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 page {
   background-color: #061429;
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 
 /* 容器样式 */
@@ -27,7 +36,7 @@ page {
   justify-content: center;
   align-items: center;
   opacity: 0.6;
-  filter: blur(5rpx);
+  filter: blur(3rpx);
 }
 
 .background-text {

@@ -3,13 +3,14 @@
 /* 引入字体 */
 @font-face {
   font-family: 'HuiWenMingTi';
-  src: url('../../fonts/汇文明朝体.otf') format('opentype');
+  src: url('https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 page {
   background-color: #061429;
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 
 /* 容器样式 */
@@ -65,6 +66,7 @@ page {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .sub-title {
@@ -75,6 +77,7 @@ page {
   line-height: 1.8;
   text-align: left;
   display: block;
+  width: 100%;
 }
 
 /* 操作按钮区样式 */
@@ -100,17 +103,30 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.8s ease-out;
   box-shadow: 0 0 10rpx rgba(92, 232, 33, 0.3);
-  animation: glowing 3s ease-in-out infinite alternate;
+  animation: button-fade-in 0.8s ease-out forwards, glowing 3s ease-in-out infinite alternate;
+  opacity: 0;
+}
+
+@keyframes button-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes glowing {
   0% {
     box-shadow: 0 0 10rpx rgba(92, 232, 33, 0.3);
   }
+  50% {
+    box-shadow: 0 0 25rpx rgba(92, 232, 33, 0.6);
+  }
   100% {
-    box-shadow: 0 0 20rpx rgba(92, 232, 33, 0.7);
+    box-shadow: 0 0 18rpx rgba(92, 232, 33, 0.7);
   }
 }
 
@@ -136,6 +152,7 @@ page {
   background-color: #061429;
   box-shadow: 0 -10rpx 25rpx -5rpx rgba(92, 232, 33, 0.12);
   z-index: 10;
+  overflow: hidden;
 }
 
 .footer-area::before {
@@ -149,11 +166,64 @@ page {
   opacity: 0.8;
 }
 
+/* 热气效果 */
+.steam-effect {
+  position: absolute;
+  top: -80rpx;
+  left: 0;
+  right: 0;
+  height: 60rpx;
+  background: radial-gradient(ellipse at center, rgba(92, 232, 33, 0.05) 0%, rgba(92, 232, 33, 0) 70%);
+  animation: steam-rise 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+.steam-effect::before, .steam-effect::after {
+  content: '';
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(92, 232, 33, 0.08) 0%, rgba(92, 232, 33, 0) 70%);
+  animation: steam-drift 12s ease-in-out infinite alternate;
+}
+
+.steam-effect::before {
+  left: 15%;
+  animation-delay: -2s;
+}
+
+.steam-effect::after {
+  right: 15%;
+  animation-delay: -5s;
+}
+
+@keyframes steam-rise {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-20rpx) scaleY(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes steam-drift {
+  0% {
+    transform: translateX(-15rpx);
+  }
+  100% {
+    transform: translateX(15rpx);
+  }
+}
+
 .soup-icon {
   width: 60rpx;
   height: 60rpx;
   margin-bottom: 10rpx;
   filter: drop-shadow(0 0 5rpx rgba(92, 232, 33, 0.3));
+  position: relative;
+  z-index: 5;
 }
 
 .footer-text {
@@ -161,4 +231,106 @@ page {
   font-weight: 400;
   color: #FFFFFF;
   text-shadow: 0 0 8rpx rgba(92, 232, 33, 0.2);
+  position: relative;
+  z-index: 5;
+}
+
+/* 打字机动画效果 */
+.typing-animation {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  width: fit-content;
+  max-width: 0;
+  animation-fill-mode: forwards;
+}
+
+/* 只有最后一个副标题才有光标 */
+.sub-title:last-child.typing-animation::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 30%;
+  height: 40%;
+  width: 4rpx;
+  background-color: #FF4444;
+  border-radius: 1rpx;
+  box-shadow: 0 0 5rpx rgba(255, 68, 68, 0.6), 0 0 8rpx rgba(255, 0, 0, 0.4);
+  animation: cursor-blink-horror 1.2s step-end infinite;
+}
+
+/* 光标闪烁动画 - 惊悚版 */
+@keyframes cursor-blink-horror {
+  0%, 100% { opacity: 1; width: 4rpx; }
+  25% { opacity: 0.2; width: 4rpx; }
+  50% { opacity: 1; width: 5rpx; }
+  60% { opacity: 0.5; width: 3rpx; }
+  75% { opacity: 1; width: 4rpx; }
+}
+
+/* 主标题打字机动画 */
+.main-title.typing-animation {
+  animation: typing-main-title 2.5s steps(10, end) forwards;
+  padding-right: 0;
+}
+
+@keyframes typing-main-title {
+  0% { max-width: 0; }
+  30% { max-width: 30%; }
+  35% { max-width: 25%; } /* 回退效果 */
+  65% { max-width: 65%; }
+  70% { max-width: 60%; } /* 回退效果 */
+  100% { max-width: 100%; }
+}
+
+/* 副标题打字机动画 - 多个随机效果 */
+.sub-title.typing-animation:nth-of-type(1) {
+  animation: typing-sub-title-1 1.8s steps(12, end) forwards;
+}
+
+.sub-title.typing-animation:nth-of-type(2) {
+  animation: typing-sub-title-2 2.2s steps(15, end) forwards;
+}
+
+.sub-title.typing-animation:nth-of-type(3) {
+  animation: typing-sub-title-3 1.5s steps(9, end) forwards;
+}
+
+.sub-title.typing-animation:nth-of-type(4) {
+  animation: typing-sub-title-4 1.7s steps(10, end) forwards;
+  padding-right: 4rpx; /* 只给最后一个添加右侧padding，为光标留空间 */
+}
+
+/* 不同副标题的打字动画，增加随机性和惊悚感 */
+@keyframes typing-sub-title-1 {
+  0% { max-width: 0; }
+  40% { max-width: 40%; }
+  44% { max-width: 38%; } /* 回退效果 */
+  100% { max-width: 100%; }
+}
+
+@keyframes typing-sub-title-2 {
+  0% { max-width: 0; }
+  30% { max-width: 35%; }
+  33% { max-width: 33%; } /* 回退效果 */
+  60% { max-width: 70%; }
+  65% { max-width: 67%; } /* 回退效果 */
+  100% { max-width: 100%; }
+}
+
+@keyframes typing-sub-title-3 {
+  0% { max-width: 0; }
+  45% { max-width: 50%; }
+  50% { max-width: 45%; } /* 回退效果 */
+  100% { max-width: 100%; }
+}
+
+@keyframes typing-sub-title-4 {
+  0% { max-width: 0; }
+  25% { max-width: 25%; }
+  30% { max-width: 20%; } /* 回退效果 */
+  70% { max-width: 75%; }
+  75% { max-width: 70%; } /* 回退效果 */
+  100% { max-width: 100%; }
 } 
