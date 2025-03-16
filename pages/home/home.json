@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "海龟汤Daily",
+  "navigationBarBackgroundColor": "#061429",
+  "navigationBarTextStyle": "white",
+  "disableScroll": true,
+  "usingComponents": {
+    "nav-bar": "../components/nav-bar"
+  },
+  "navigationStyle": "custom"
+} 

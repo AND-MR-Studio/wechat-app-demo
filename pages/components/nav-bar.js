@@ -115,7 +115,7 @@ Component({
     // 导航到首页
     navigateToHome: function() {
       wx.reLaunch({
-        url: '/pages/login/login',
+        url: '/pages/home/home',
         success: function() {
           console.log('返回首页成功');
         },

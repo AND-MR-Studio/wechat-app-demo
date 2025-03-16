@@ -31,7 +31,7 @@
   width: 100%;
   text-align: center;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -63,7 +63,7 @@
   left: 2px;
   width: 16px; /* 缩小尺寸 */
   height: 16px; /* 缩小尺寸 */
-  border: 1px solid transparent; /* 移除绿色描边，改为透明 */
+  border: 1px solid transparent; 
   border-radius: 0;
   box-sizing: border-box;
   /* 使用clip-path创建房子形状 */
