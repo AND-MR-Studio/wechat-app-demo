@@ -35,12 +35,33 @@
     </view>
 
     <!-- 底部图标区 -->
-    <view class="footer-area" style="position: fixed; left: -1rpx; top: 1474rpx">
-      <view class="icon-container">
-        <view class="steam-effect"></view>
-        <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit" style="width: 79rpx; height: 79rpx; display: inline-block; box-sizing: border-box; left: -8rpx; top: -12rpx; position: relative"></image>
+    <view class="footer-area">
+      <!-- 煲汤按钮 -->
+      <view class="footer-item {{activeTab === 'cook' ? 'active' : ''}}" bindtap="onCookSoupTap">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <view class="placeholder-icon"></view>
+        </view>
+        <text class="footer-text">煲汤</text>
       </view>
-      <text class="footer-text">喝汤</text>
+
+      <!-- 喝汤按钮 - 中心位置且默认选中 -->
+      <view class="footer-item drink {{activeTab === 'drink' ? 'active' : ''}}" bindtap="onDrinkSoupTap">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
+        </view>
+        <text class="footer-text">喝汤</text>
+      </view>
+
+      <!-- 我的按钮 -->
+      <view class="footer-item {{activeTab === 'my' ? 'active' : ''}}" bindtap="onMyTap">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <view class="placeholder-icon"></view>
+        </view>
+        <text class="footer-text">我</text>
+      </view>
     </view>
   </view>
 </view> 

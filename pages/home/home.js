@@ -28,7 +28,9 @@ Page({
     // 字体是否加载完成
     fontLoaded: false,
     // 状态栏高度（供导航栏使用）
-    statusBarHeight: 20
+    statusBarHeight: 20,
+    // 底部栏选中状态
+    activeTab: 'drink' // 默认选中喝汤功能
   },
 
   /**
@@ -338,5 +340,109 @@ Page({
         this.startTextAnimation();
       }, 800); // 增加延迟，确保状态能够完全重置
     }
+  },
+
+  /**
+   * 点击煲汤按钮
+   */
+  onCookSoupTap: function() {
+    this.setData({
+      activeTab: 'cook'
+    });
+    
+    wx.showToast({
+      title: '煲汤功能开发中',
+      icon: 'none',
+      duration: 2000
+    });
+  },
+
+  /**
+   * 点击我的按钮
+   */
+  onMyTap: function() {
+    this.setData({
+      activeTab: 'my'
+    });
+    
+    wx.showToast({
+      title: '个人中心开发中',
+      icon: 'none',
+      duration: 2000
+    });
+  },
+
+  /**
+   * 点击喝汤按钮
+   */
+  onDrinkSoupTap: function() {
+    this.setData({
+      activeTab: 'drink'
+    });
+    
+    // 如果按钮已经在动画中，则不处理
+    if (this.data.buttonAnimating) {
+      return;
+    }
+    
+    // 设置按钮动画状态
+    this.setData({
+      buttonAnimating: true
+    });
+    
+    // 创建按钮动画
+    const buttonAnimation = wx.createAnimation({
+      duration: 300,
+      timingFunction: 'ease-out',
+      delay: 0
+    });
+    
+    // 创建背景动画
+    const backgroundAnimation = wx.createAnimation({
+      duration: 500,
+      timingFunction: 'ease',
+      delay: 0
+    });
+    
+    // 按钮只淡出，不缩小
+    buttonAnimation.opacity(0).step();
+    
+    // 背景模糊并降低透明度
+    backgroundAnimation.opacity(0.3).step();
+    
+    // 应用动画
+    this.setData({
+      buttonAnimation: buttonAnimation.export(),
+      backgroundAnimation: backgroundAnimation.export(),
+      backgroundAnimating: true
+    });
+    
+    // 延迟跳转，等待动画完成
+    setTimeout(() => {
+      // 跳转到主对话页面
+      wx.navigateTo({
+        url: '/pages/main/main',
+        success: () => {
+          console.log('跳转到对话页面成功');
+          
+          // 重置动画状态
+          setTimeout(() => {
+            this.setData({
+              buttonAnimating: false,
+              backgroundAnimating: false
+            });
+          }, 100);
+        },
+        fail: (error) => {
+          console.error('跳转失败', error);
+          
+          // 重置动画状态
+          this.setData({
+            buttonAnimating: false,
+            backgroundAnimating: false
+          });
+        }
+      });
+    }, 300);
   }
 }) 
