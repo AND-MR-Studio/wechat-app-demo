@@ -21,7 +21,7 @@ App({
   loadGlobalFont() {
     wx.loadFontFace({
       family: 'HuiWenMingTi',
-      source: 'url("fonts/汇文明朝体.otf")',
+      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf")',
       global: true,
       success: function(res) {
         console.log('全局字体加载成功', res);
