@@ -27,10 +27,12 @@
   <scroll-view class="chat-container" scroll-y="true" scroll-into-view="{{scrollToMessage}}" scroll-with-animation="true" enhanced="true" bounces="true">
     <!-- 对话历史 -->
     <block wx:for="{{messageList}}" wx:key="id">
-      <view class="message-item {{item.isUser ? 'user-message' : 'ai-message'}}" id="msg-{{item.id}}">
+      <view class="message-item {{item.isUser ? 'user-message' : 'ai-message'}} {{item.isHint ? 'hint-message' : ''}}" id="msg-{{item.id}}">
         <text class="message-prefix">{{item.isUser ? '>' : '>'}}</text>
         <text wx:if="{{item.isUser}}" class="message-text">{{item.content}}</text>
-        <text wx:else class="message-text typing-animation {{item.pauseClass}}">{{item.content}}</text>
+        <text wx:elif="{{item.isThinking}}" class="message-text thinking-dots">{{item.content}}</text>
+        <text wx:elif="{{item.isLatest}}" class="message-text typing-animation {{item.pauseClass}}">{{item.content}}</text>
+        <text wx:else class="message-text">{{item.content}}</text>
       </view>
     </block>
     

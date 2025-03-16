@@ -1,4 +1,7 @@
 // main.js
+// 引入工具类
+const util = require('../../utils/util.js')
+
 Page({
   /**
    * 页面的初始数据
@@ -13,69 +16,10 @@ Page({
     messageList: [
       {
         id: 'init-1',
-        content: '我是人吗？',
-        isUser: true
-      },
-      {
-        id: 'init-2',
-        content: '是。',
+        content: '欢迎来到海龟汤游戏。\n你需要通过提问来猜测谜底，\n我只会回答"是"、"否"或"不确定"。',
         isUser: false,
-        pauseClass: 'pause-animation-1'
-      },
-      {
-        id: 'init-3',
-        content: '或许同类指的是：',
-        isUser: true
-      },
-      {
-        id: 'init-4',
-        content: '不是。',
-        isUser: false,
-        pauseClass: 'pause-animation-2'
-      },
-      {
-        id: 'init-5',
-        content: 'x',
-        isUser: true
-      },
-      {
-        id: 'init-6',
-        content: '是。',
-        isUser: false,
-        pauseClass: 'pause-animation-3'
-      },
-      {
-        id: 'init-7',
-        content: 'f',
-        isUser: true
-      },
-      {
-        id: 'init-8',
-        content: '否。',
-        isUser: false,
-        pauseClass: 'pause-animation-4'
-      },
-      {
-        id: 'init-9',
-        content: 'd',
-        isUser: true
-      },
-      {
-        id: 'init-10',
-        content: '不确定。',
-        isUser: false,
-        pauseClass: 'pause-animation-1'
-      },
-      {
-        id: 'init-11',
-        content: '是、',
-        isUser: true
-      },
-      {
-        id: 'init-12',
-        content: '不确定。',
-        isUser: false,
-        pauseClass: 'pause-animation-2'
+        pauseClass: 'pause-animation-2',
+        isLatest: true
       }
     ],
     // 输入框的值
@@ -85,7 +29,22 @@ Page({
     // 输入框是否聚焦
     inputFocused: false,
     // 是否正在发送消息
-    sending: false
+    sending: false,
+    // 连续猜错或不确定的次数
+    wrongGuessCount: 0,
+    // 提示列表
+    hintList: [
+      "提示：试着从题目中的关键词入手思考。",
+      "提示：这个谜题与食物链有关。",
+      "提示：想想人与动物的关系。",
+      "提示：考虑一下'自己'在这个谜题中代表什么。",
+      "提示：这个谜题描述的可能是一个进食的过程。",
+      "提示：'同类'这个词很重要，它暗示了什么？",
+      "提示：想象一下从动物到人的转变过程。",
+      "提示：这个谜题可能与某种特殊的食物有关。",
+      "提示：试着从不同的角度解读'最后是自己'。",
+      "提示：谜底可能与某种特殊的食物习惯有关。"
+    ]
   },
 
   /**
@@ -95,10 +54,21 @@ Page({
     // 可以从options中获取传递过来的海龟汤数据
     // 或者从服务器获取
     
+    // 加载自定义字体
+    this.loadFont();
+    
+    // 尝试从本地存储加载对话记录
+    this.loadMessageHistory();
+    
     // 页面加载时自动滚动到底部
     this.setData({
       scrollToMessage: 'message-bottom'
     });
+    
+    // 记录日志
+    const logs = wx.getStorageSync('logs') || []
+    logs.unshift(Date.now())
+    wx.setStorageSync('logs', logs)
   },
 
   /**
@@ -107,6 +77,48 @@ Page({
   onShow: function () {
     // 页面显示时执行入场动画
     this.pageEnterAnimation();
+    
+    // 尝试从本地存储加载对话记录
+    this.loadMessageHistory();
+  },
+
+  /**
+   * 从本地存储加载对话记录
+   */
+  loadMessageHistory: function() {
+    try {
+      const messageHistory = wx.getStorageSync('messageHistory');
+      if (messageHistory && messageHistory.length > 0) {
+        // 找到最后一条AI消息，标记为最新
+        const updatedList = messageHistory.map((item, index) => {
+          if (!item.isUser && index === messageHistory.length - 1) {
+            return { ...item, isLatest: true };
+          } else if (!item.isUser) {
+            return { ...item, isLatest: false };
+          }
+          return item;
+        });
+        
+        this.setData({
+          messageList: updatedList
+        });
+      }
+    } catch (e) {
+      console.error('加载对话记录失败', e);
+    }
+  },
+
+  /**
+   * 保存对话记录到本地存储
+   */
+  saveMessageHistory: function() {
+    try {
+      // 过滤掉思考中的消息
+      const messageToSave = this.data.messageList.filter(item => !item.isThinking);
+      wx.setStorageSync('messageHistory', messageToSave);
+    } catch (e) {
+      console.error('保存对话记录失败', e);
+    }
   },
 
   /**
@@ -123,6 +135,9 @@ Page({
    */
   navigateBack: function () {
     console.log('返回按钮被点击');
+    
+    // 保存对话记录
+    this.saveMessageHistory();
     
     // 直接使用navigateBack返回上一页
     wx.navigateBack({
@@ -213,12 +228,39 @@ Page({
    * 添加消息到列表
    */
   addMessage: function (message) {
-    const messageList = this.data.messageList.concat(message);
-    
-    this.setData({
-      messageList: messageList,
-      scrollToMessage: `msg-${message.id}`
-    });
+    // 如果是AI消息，先移除之前所有AI消息的isLatest标记
+    if (!message.isUser) {
+      const updatedList = this.data.messageList.map(item => {
+        if (!item.isUser) {
+          return { ...item, isLatest: false };
+        }
+        return item;
+      });
+      
+      // 标记当前AI消息为最新
+      message.isLatest = true;
+      
+      const messageList = updatedList.concat(message);
+      
+      this.setData({
+        messageList: messageList,
+        scrollToMessage: `msg-${message.id}`
+      }, () => {
+        // 保存对话记录
+        this.saveMessageHistory();
+      });
+    } else {
+      // 用户消息直接添加
+      const messageList = this.data.messageList.concat(message);
+      
+      this.setData({
+        messageList: messageList,
+        scrollToMessage: `msg-${message.id}`
+      }, () => {
+        // 保存对话记录
+        this.saveMessageHistory();
+      });
+    }
   },
 
   /**
@@ -226,26 +268,60 @@ Page({
    * 在实际应用中，这里应该调用后端API获取回复
    */
   simulateAIResponse: function (userQuestion) {
-    // 模拟网络延迟
+    // 设置思考状态
+    const thinkingMessage = {
+      id: 'thinking-' + Date.now(),
+      content: '',
+      isUser: false,
+      isThinking: true,
+      pauseClass: 'pause-animation-1'
+    };
+    
+    // 将思考消息添加到消息列表
+    this.addThinkingMessage(thinkingMessage);
+    
+    // 模拟网络延迟和思考时间
+    const thinkingTime = 1500 + Math.random() * 2000; // 1.5-3.5秒的思考时间
+    
     setTimeout(() => {
+      // 移除思考消息
+      this.removeThinkingMessage();
+      
       // 简单的回复逻辑，实际应用中应该调用AI服务
       let response = '';
+      let isCorrectGuess = false;
       
       // 简单的关键词匹配
       const question = userQuestion.toLowerCase();
       
       if (question.includes('吃') || question.includes('食物')) {
         response = '是。';
+        isCorrectGuess = true;
       } else if (question.includes('人') || question.includes('自己')) {
         response = '是。';
+        isCorrectGuess = true;
       } else if (question.includes('动物')) {
         response = '是。';
+        isCorrectGuess = true;
       } else if (question.includes('谜底')) {
         response = '不是。';
       } else {
         // 随机回复
         const responses = ['是。', '否。', '不确定。'];
         response = responses[Math.floor(Math.random() * responses.length)];
+        
+        // 如果回复是"否"或"不确定"，增加错误计数
+        if (response === '否。' || response === '不确定。') {
+          this.increaseWrongGuessCount();
+        } else {
+          // 如果回复是"是"，重置错误计数
+          this.resetWrongGuessCount();
+        }
+      }
+      
+      // 如果是正确的猜测，重置错误计数
+      if (isCorrectGuess) {
+        this.resetWrongGuessCount();
       }
       
       // 随机选择一个停顿动画类
@@ -263,10 +339,119 @@ Page({
       // 将AI消息添加到消息列表
       this.addMessage(aiMessage);
       
+      // 检查是否需要给出提示
+      this.checkAndGiveHint();
+      
       // 重置发送状态
       this.setData({
         sending: false
       });
-    }, 800);
+    }, thinkingTime);
+  },
+  
+  /**
+   * 添加思考消息到列表
+   */
+  addThinkingMessage: function (message) {
+    // 移除之前所有AI消息的isLatest标记
+    const updatedList = this.data.messageList.map(item => {
+      if (!item.isUser) {
+        return { ...item, isLatest: false };
+      }
+      return item;
+    });
+    
+    // 标记当前思考消息为最新
+    message.isLatest = true;
+    
+    const messageList = updatedList.concat(message);
+    
+    this.setData({
+      messageList: messageList,
+      scrollToMessage: `msg-${message.id}`
+    });
+  },
+  
+  /**
+   * 移除思考消息
+   */
+  removeThinkingMessage: function () {
+    // 过滤掉所有思考消息
+    const filteredList = this.data.messageList.filter(item => !item.isThinking);
+    
+    this.setData({
+      messageList: filteredList
+    });
+  },
+
+  /**
+   * 增加错误猜测计数
+   */
+  increaseWrongGuessCount: function() {
+    this.setData({
+      wrongGuessCount: this.data.wrongGuessCount + 1
+    });
+    console.log('连续错误次数：', this.data.wrongGuessCount);
+  },
+  
+  /**
+   * 重置错误猜测计数
+   */
+  resetWrongGuessCount: function() {
+    this.setData({
+      wrongGuessCount: 0
+    });
+    console.log('错误次数已重置');
+  },
+  
+  /**
+   * 检查是否需要给出提示
+   */
+  checkAndGiveHint: function() {
+    // 如果连续猜错或不确定3次，给出提示
+    if (this.data.wrongGuessCount >= 3) {
+      // 随机选择一个提示
+      const randomIndex = Math.floor(Math.random() * this.data.hintList.length);
+      const hint = this.data.hintList[randomIndex];
+      
+      // 随机选择一个停顿动画类
+      const pauseClasses = ['pause-animation-1', 'pause-animation-2', 'pause-animation-3', 'pause-animation-4'];
+      const pauseClass = pauseClasses[Math.floor(Math.random() * pauseClasses.length)];
+      
+      // 创建提示消息对象
+      const hintMessage = {
+        id: Date.now() + 100, // 确保ID不重复
+        content: hint,
+        isUser: false,
+        pauseClass: pauseClass,
+        isHint: true
+      };
+      
+      // 延迟一段时间后显示提示，让用户先看到AI的回复
+      setTimeout(() => {
+        // 将提示消息添加到消息列表
+        this.addMessage(hintMessage);
+        
+        // 重置错误计数
+        this.resetWrongGuessCount();
+      }, 1500);
+    }
+  },
+
+  /**
+   * 加载字体
+   */
+  loadFont: function() {
+    wx.loadFontFace({
+      global: true,
+      family: 'HuiWenMingTi',
+      source: 'url("../../fonts/汇文明朝体.otf")',
+      success: function(res) {
+        console.log('字体加载成功', res);
+      },
+      fail: function(err) {
+        console.log('字体加载失败', err);
+      }
+    });
   }
 }) 
