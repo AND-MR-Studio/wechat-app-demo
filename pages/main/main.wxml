@@ -36,6 +36,12 @@
       </view>
     </block>
     
+    <!-- AI思考指示器 -->
+    <view wx:if="{{isAiThinking}}" class="message-item ai-message">
+      <text class="message-prefix">></text>
+      <text class="message-text thinking-dots"></text>
+    </view>
+    
     <!-- 底部占位，确保新消息可见 -->
     <view class="message-bottom-space" id="message-bottom"></view>
   </scroll-view>
