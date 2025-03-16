@@ -1,0 +1,98 @@
+/* pages/components/nav-bar.wxss */
+.nav-bar-container {
+  width: 100%;
+  position: fixed;
+  /* 注意：top值已移到内联样式中，由JS控制 */
+  left: 0;
+  z-index: 999;
+}
+
+.nav-bar {
+  height: 44px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'HuiWenMingTi', sans-serif;
+  position: relative; /* 添加相对定位，为绝对定位的标题提供参考 */
+}
+
+.nav-left {
+  width: 60px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2; /* 提高层级，确保可点击 */
+}
+
+.nav-title {
+  position: absolute; /* 绝对定位确保标题居中 */
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 1; /* 降低层级，确保按钮可点击 */
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.nav-right {
+  width: 60px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2; /* 提高层级，确保可点击 */
+}
+
+/* 线性房子图标 - 缩小尺寸并移除绿色描边 */
+.home-icon {
+  width: 20px; /* 缩小尺寸 */
+  height: 20px; /* 缩小尺寸 */
+  position: relative;
+}
+
+.home-outline {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px; /* 缩小尺寸 */
+  height: 16px; /* 缩小尺寸 */
+  border: 1px solid transparent; 
+  border-radius: 0;
+  box-sizing: border-box;
+  /* 使用clip-path创建房子形状 */
+  clip-path: polygon(50% 0%, 100% 40%, 100% 100%, 0% 100%, 0% 40%);
+  background-color: #5CE821; /* 添加背景色替代描边 */
+}
+
+/* 更多按钮图标 */
+.more-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  width: 24px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #5CE821;
+  margin: 2px 0;
+}
+
+/* 底部渐变阴影 - 降低透明度 */
+.nav-shadow {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(92, 232, 33, 0.2), rgba(92, 232, 33, 0)); /* 降低透明度 */
+  box-shadow: 0 2px 8px rgba(92, 232, 33, 0.1); /* 降低阴影透明度 */
+}

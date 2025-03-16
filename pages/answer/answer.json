@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "汤底",
+  "navigationBarBackgroundColor": "#061429",
+  "navigationBarTextStyle": "white",
+  "disableScroll": false,
+  "usingComponents": {
+    "nav-bar": "../components/nav-bar"
+  },
+  "navigationStyle": "custom"
+} 

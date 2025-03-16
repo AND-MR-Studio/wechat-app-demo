@@ -1,0 +1,32 @@
+<view class="nav-bar-container" style="background-color: transparent; top: {{topDistance}}px;">
+  <!-- 状态栏占位 -->
+  <view class="status-bar" style="height: {{statusBarHeight}}px;"></view>
+  
+  <!-- 导航栏内容 -->
+  <view class="nav-bar" style="color: {{textColor}};">
+    <!-- 左侧home按钮 -->
+    <view class="nav-left" bindtap="onHomeClick">
+      <view class="home-icon">
+        <!-- 线性房子图标 -->
+        <view class="home-outline"></view>
+      </view>
+    </view>
+    
+    <!-- 中间标题 -->
+    <view class="nav-title">
+      <text>{{title}}</text>
+    </view>
+    
+    <!-- 右侧更多按钮 -->
+    <view class="nav-right" bindtap="onMoreClick">
+      <view class="more-icon">
+        <view class="dot"></view>
+        <view class="dot"></view>
+        <view class="dot"></view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部渐变阴影 -->
+  <view class="nav-shadow"></view>
+</view>

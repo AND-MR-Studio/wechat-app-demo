@@ -1,5 +1,13 @@
 <!-- main.wxml -->
 <view class="container">
+  <!-- 使用统一导航栏组件 -->
+  <nav-bar 
+    title="一日汤" 
+    show-home="{{true}}" 
+    bind:homeclick="onHomeClick"
+    bind:moreclick="onMoreClick">
+  </nav-bar>
+  
   <!-- 背景层 - 模糊的文字背景 -->
   <view class="background-layer">
     <view class="background-text">
@@ -10,45 +18,62 @@
     </view>
   </view>
 
-  <!-- 顶部导航区 -->
-  <view class="nav-bar">
-    <view class="back-button" bindtap="navigateBack">
-      <view class="back-icon"></view>
-    </view>
-    <view class="title">一日汤</view>
-    <view class="more-button">
-      <view class="more-icon">
-        <view></view>
-      </view>
-    </view>
-  </view>
-
   <!-- 对话内容区 -->
   <scroll-view class="chat-container" scroll-y="true" scroll-into-view="{{scrollToMessage}}" scroll-with-animation="true" enhanced="true" bounces="true">
-    <!-- 对话历史 -->
-    <block wx:for="{{messageList}}" wx:key="id">
-      <view class="message-item {{item.isUser ? 'user-message' : 'ai-message'}}" id="msg-{{item.id}}">
-        <text class="message-prefix">{{item.isUser ? '>' : '>'}}</text>
-        <text wx:if="{{item.isUser}}" class="message-text">{{item.content}}</text>
-        <text wx:else class="message-text typing-animation {{item.pauseClass}}">{{item.content}}</text>
-      </view>
-    </block>
-    
-    <!-- 底部占位，确保新消息可见 -->
-    <view class="message-bottom-space" id="message-bottom"></view>
+    <!-- 消息列表 -->
+    <scroll-view scroll-y="true" scroll-into-view="{{scrollToMessage}}" class="message-list">
+      <block wx:for="{{messageList}}" wx:key="id">
+        <view id="msg-{{item.id}}" class="message {{item.isUser ? 'user-message' : 'ai-message'}}">
+          <!-- 用户消息 -->
+          <block wx:if="{{item.isUser}}">
+            <view class="message-content user-content">
+              <!-- 使用text组件保持原有换行并允许长按复制 -->
+              <text selectable="true" class="message-text">{{item.content}}</text>
+            </view>
+          </block>
+          
+          <!-- AI消息或思考中状态 -->
+          <block wx:if="{{!item.isUser}}">
+            <view class="message-content ai-content {{item.isHint ? 'hint-content' : ''}} {{item.isNoChance ? 'no-chance-content' : ''}}">
+              <!-- 思考中状态 -->
+              <block wx:if="{{item.isThinking}}">
+                <view class="thinking-dots">
+                  <view class="dot"></view>
+                  <view class="dot"></view>
+                  <view class="dot"></view>
+                </view>
+              </block>
+              
+              <!-- 普通AI消息 -->
+              <block wx:else>
+                <text 
+                  selectable="true" 
+                  class="message-text {{item.typingInProgress ? 'typing-animation ' + item.pauseClass : ''}} {{item.glitching ? 'text-glitch' : ''}}" 
+                  data-text="{{item.content}}">{{item.content}}</text>
+              </block>
+            </view>
+          </block>
+        </view>
+      </block>
+      
+      <!-- 底部留白区域，用于消息滚动定位 -->
+      <view id="message-bottom" style="height: 20px;"></view>
+    </scroll-view>
   </scroll-view>
   
   <!-- 输入操作区 -->
-  <view class="input-area">
-    <input class="message-input" 
-           placeholder="输入你的猜测..." 
-           placeholder-class="placeholder"
-           value="{{inputValue}}"
-           bindinput="onInputChange"
-           bindfocus="onInputFocus"
-           bindblur="onInputBlur"
-           confirm-type="send"
-           bindconfirm="sendMessage" />
+  <view class="input-area" style="position: fixed; left: -2rpx; top: 1430rpx">
+    <view class="input-wrapper">
+      <input class="message-input" 
+             placeholder="输入你的问题，你还有{{maxGuessCount - currentGuessCount}}次机会..." 
+             placeholder-class="placeholder"
+             value="{{inputValue}}"
+             bindinput="onInputChange"
+             bindfocus="onInputFocus"
+             bindblur="onInputBlur"
+             confirm-type="send"
+             bindconfirm="sendMessage" />
+    </view>
     <view class="send-button {{inputValue.trim() ? 'active' : 'inactive'}}" bindtap="sendMessage">
       <view class="send-icon {{sending ? 'loading' : ''}}">?</view>
     </view>

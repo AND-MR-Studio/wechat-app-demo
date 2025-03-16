@@ -1,0 +1,67 @@
+<!-- home.wxml -->
+<view class="container">
+  <!-- 使用统一导航栏组件 -->
+  <nav-bar 
+    title="一日汤" 
+    isHomePage="{{true}}" 
+    bind:homeclick="onHomeClick"
+    bind:moreclick="onMoreClick">
+  </nav-bar>
+  
+  <!-- 其他内容 -->
+  <view class="content" style="margin-top: {{statusBarHeight + 44}}px;">
+    <!-- 标题区 -->
+    <view class="title-area" style="display: none;">
+      <text class="title">一日汤</text>
+    </view>
+
+    <!-- 文案区 -->
+    <view class="content-area" animation="{{backgroundAnimation}}">
+      <!-- 主标题只有在showMainTitle为true时才显示 -->
+      <text wx:if="{{showMainTitle}}" class="main-title {{mainTitleTyping ? 'typing-animation' : ''}}" data-index="0">最后是自己</text>
+
+      <view class="sub-title-container">
+        <!-- 副标题只有在对应的showSubTitle数组项为true时才显示 -->
+        <text wx:if="{{showSubTitle[0]}}" class="sub-title {{subTitleTyping[0] ? 'typing-animation' : ''}}" data-index="1">一开始是动物，</text>
+        <text wx:if="{{showSubTitle[1]}}" class="sub-title {{subTitleTyping[1] ? 'typing-animation' : ''}}" data-index="2">然后是同类的尸体，</text>
+        <text wx:if="{{showSubTitle[2]}}" class="sub-title {{subTitleTyping[2] ? 'typing-animation' : ''}}" data-index="3">接着是同类，</text>
+        <text wx:if="{{showSubTitle[3]}}" class="sub-title {{subTitleTyping[3] ? 'typing-animation' : ''}}" data-index="4">最后是自己。</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮区 -->
+    <view class="button-area">
+      <button wx:if="{{buttonVisible}}" class="start-button" bindtap="onStartTap" animation="{{buttonAnimation}}" style="position: relative; left: 0rpx; top: -44rpx">开始喝汤</button>
+    </view>
+
+    <!-- 底部图标区 -->
+    <view class="footer-area">
+      <!-- 煲汤按钮 -->
+      <view class="footer-item {{activeTab === 'cook' ? 'active' : ''}}" bindtap="onCookSoupTap" style="position: relative; left: 4rpx; top: -22rpx">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <view class="placeholder-icon"></view>
+        </view>
+        <text class="footer-text">煲汤</text>
+      </view>
+
+      <!-- 喝汤按钮 - 中心位置且默认选中 -->
+      <view class="footer-item drink {{activeTab === 'drink' ? 'active' : ''}}" bindtap="onDrinkSoupTap" style="position: relative; left: -2rpx; top: -14rpx">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
+        </view>
+        <text class="footer-text">喝汤</text>
+      </view>
+
+      <!-- 我的按钮 -->
+      <view class="footer-item {{activeTab === 'my' ? 'active' : ''}}" bindtap="onMyTap" style="position: relative; left: 1rpx; top: -18rpx">
+        <view class="icon-container">
+          <view class="steam-effect"></view>
+          <view class="placeholder-icon"></view>
+        </view>
+        <text class="footer-text">我</text>
+      </view>
+    </view>
+  </view>
+</view> 
