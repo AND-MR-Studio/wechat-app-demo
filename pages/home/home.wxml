@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 使用统一导航栏组件 -->
   <nav-bar 
-    title="一日汤" 
+    title="一勺海龟汤" 
     isHomePage="{{true}}" 
     bind:homeclick="onHomeClick"
     bind:moreclick="onMoreClick">
@@ -12,7 +12,7 @@
   <view class="content" style="margin-top: {{statusBarHeight + 44}}px;">
     <!-- 标题区 -->
     <view class="title-area" style="display: none;">
-      <text class="title">一日汤</text>
+      <text class="title">一勺海龟汤</text>
     </view>
 
     <!-- 文案区 -->

@@ -17,7 +17,7 @@ Page({
       {
         id: 'init-1',
         content: '', // 初始为空，以便启用打字机效果
-        fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测谜底，\n> 我只会回答"是"、"否"或"不确定"。',
+        fullContent: '> 欢迎来到一勺海龟汤。\n> 你需要通过提问来猜测谜底，\n> 我只会回答"是"、"否"或"不确定"。',
         isUser: false,
         pauseClass: 'pause-animation-2',
         isLatest: true,
@@ -939,7 +939,7 @@ Page({
     const initialMessage = {
       id: 'init-' + Date.now(),
       content: '', // 初始为空，以便启用打字机效果
-      fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
+      fullContent: '> 欢迎来到一勺海龟汤。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
       isUser: false,
       pauseClass: 'pause-animation-2',
       isLatest: true,
@@ -972,7 +972,7 @@ Page({
     const initialMessage = {
       id: 'init-' + Date.now(),
       content: '', // 初始为空，以便启用打字机效果
-      fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
+      fullContent: '> 欢迎来到一勺海龟汤。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
       isUser: false,
       pauseClass: 'pause-animation-2',
       isLatest: true,
@@ -1137,7 +1137,7 @@ Page({
     }, 1000);
     
     return {
-      title: `海龟汤谜题：${this.data.currentSoup.title}`,
+      title: `你能猜到吗：${this.data.currentSoup.title}`,
       path: '/pages/main/main',
       imageUrl: '/images/share-image.png' // 可以替换为实际的分享图片
     }

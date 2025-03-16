@@ -11,7 +11,7 @@
   <view class="content" style="margin-top: {{statusBarHeight + 44}}px;">
     <!-- 标题 -->
     <view class="title-area">
-      <text class="title">一日汤·用户登录</text>
+      <text class="title">一勺海龟汤·用户登录</text>
     </view>
 
     <!-- 表单区域 -->
@@ -71,6 +71,6 @@
   
   <!-- 底部区域 -->
   <view class="footer">
-    <text>一日汤 © 2023</text>
+    <text>一勺海龟汤 © 2023</text>
   </view>
 </view>

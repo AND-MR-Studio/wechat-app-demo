@@ -107,15 +107,15 @@ Page({
   onMoreClick: function() {
     // 显示操作菜单
     wx.showActionSheet({
-      itemList: ['关于一日汤', '设置', '反馈问题'],
+      itemList: ['关于一勺海龟汤', '设置', '反馈问题'],
       success: (res) => {
         console.log(res.tapIndex);
         // 根据点击的选项执行不同操作
         switch(res.tapIndex) {
-          case 0: // 关于一日汤
+          case 0: // 关于一勺海龟汤
             wx.showModal({
-              title: '关于一日汤',
-              content: '一日汤是一款每日为您提供海龟汤谜题的小程序。每天一个新谜题，开动脑筋解开谜底。',
+              title: '关于一勺海龟汤',
+              content: '一勺海龟汤是一款每日为您提供海龟汤谜题的小程序。和AI对话一步步解开谜底。',
               showCancel: false
             });
             break;

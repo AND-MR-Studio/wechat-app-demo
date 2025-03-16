@@ -6,7 +6,7 @@ Component({
     // 标题文本
     title: {
       type: String,
-      value: '一日汤'
+      value: '一勺海龟汤'
     },
     // 是否是首页
     isHomePage: {

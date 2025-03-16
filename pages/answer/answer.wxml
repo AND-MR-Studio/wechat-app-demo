@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 使用统一导航栏组件 -->
   <nav-bar 
-    title="一日汤" 
+    title="一勺海龟汤" 
     isHomePage="{{false}}" 
     bind:homeclick="onHomeClick"
     bind:moreclick="onMoreClick">
