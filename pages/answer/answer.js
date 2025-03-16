@@ -7,7 +7,7 @@ Page({
     // 汤题标题
     soupTitle: "最后是自己",
     // 汤底内容
-    answerContent: "这是描述一个食人族部落的成长仪式。在这个部落里，孩子成长的过程中会经历几个阶段：\n1. 一开始，他们会猎杀并食用动物\n2. 然后，他们会食用已经死亡的同类（部落中的尸体）\n3. 接着，他们会猎杀并食用其他活着的同类（其他部落的人）\n4. 最后，在最终的成人仪式中，他们会吃掉自己身体的一部分。",
+    answerContent: "少女为了复活爱人乞求邪神，\n邪神告诉她以五脏六腑为引的邪术，\n但没有告诉她要用自己的脏器。\n少女一个个尝试过来，\n最终用自己的性命换取爱人的性命。",
     // 状态栏高度
     statusBarHeight: 20,
     // 底部栏选中状态
@@ -75,6 +75,30 @@ Page({
     });
   },
 
+  /**
+   * 点击返回首页按钮
+   */
+  onHomeClick: function() {
+    console.log('返回首页按钮被点击');
+    
+    // 返回首页
+    wx.reLaunch({
+      url: '/pages/home/home',
+      success: function() {
+        console.log('返回首页成功');
+      },
+      fail: function(error) {
+        console.error('返回首页失败', error);
+      }
+    });
+  },
+
+  /**
+   * 点击返回首页按钮
+   */
+  onBackToHomeTap: function() {
+    this.onHomeClick();
+  },
 
   /**
    * 处理更多按钮点击事件

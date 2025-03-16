@@ -35,6 +35,10 @@ Page({
     sending: false,
     // 连续猜错或不确定的次数
     wrongGuessCount: 0,
+    // 最大提问次数
+    maxGuessCount: 10,
+    // 当前提问次数
+    currentGuessCount: 0,
     // 提示列表
     hintList: [
       "提示：试着从汤面的关键词入手思考。",
@@ -72,6 +76,11 @@ Page({
     
     // 尝试从本地存储加载对话记录
     this.loadMessageHistory();
+    
+    // 初始化提问次数
+    this.setData({
+      currentGuessCount: 0
+    });
     
     // 页面加载时自动滚动到底部
     this.setData({
@@ -155,8 +164,12 @@ Page({
           return item;
         });
         
+        // 计算用户消息数量作为已使用的提问次数
+        const userMessageCount = messageHistory.filter(item => item.isUser).length;
+        
         this.setData({
-          messageList: updatedList
+          messageList: updatedList,
+          currentGuessCount: userMessageCount
         });
       }
     } catch (e) {
@@ -256,6 +269,23 @@ Page({
       return;
     }
     
+    // 检查用户是否还有剩余次数
+    if (this.data.currentGuessCount >= this.data.maxGuessCount) {
+      // 用户没有剩余次数，显示提示
+      wx.showToast({
+        title: '你已经没有机会了，请获取更多机会',
+        icon: 'none',
+        duration: 2000
+      });
+      
+      // 显示获取更多机会的提示框
+      setTimeout(() => {
+        this.showGetMoreChancesModal();
+      }, 1000);
+      
+      return;
+    }
+    
     // 设置发送状态
     this.setData({
       sending: true
@@ -273,7 +303,9 @@ Page({
     
     // 清空输入框
     this.setData({
-      inputValue: ''
+      inputValue: '',
+      // 增加提问次数计数
+      currentGuessCount: this.data.currentGuessCount + 1
     });
     
     // 模拟AI回复
@@ -560,6 +592,35 @@ Page({
       // 移除思考消息
       this.removeThinkingMessage();
       
+      // 检查是否超过最大提问次数
+      if (this.data.currentGuessCount > this.data.maxGuessCount) {
+        // 用户已经没有机会了
+        const noChanceMessage = {
+          id: Date.now(),
+          content: '> 你没有机会了。',
+          fullContent: '> 你没有机会了。',
+          isUser: false,
+          pauseClass: 'pause-animation-2',
+          isNoChance: true, // 标记为没有机会的消息，将显示为红色
+          typingInProgress: this.data.typingConfig.enabled
+        };
+        
+        // 将消息添加到消息列表
+        this.addMessage(noChanceMessage);
+        
+        // 重置发送状态
+        this.setData({
+          sending: false
+        });
+        
+        // 延迟一段时间后显示提示框
+        setTimeout(() => {
+          this.showGetMoreChancesModal();
+        }, 1500);
+        
+        return;
+      }
+      
       // 检查是否猜到了汤底（触发词：汤底）
       const foundAnswer = userQuestion.includes('汤底');
       
@@ -568,7 +629,7 @@ Page({
       
       if (foundAnswer) {
         // 用户猜到了答案
-        response = '你喝到了汤底。';
+        response = '你喝到了汤底。'; //  不许修改这句话
         backspaceChanceModifier = -0.1; // 降低回退概率
         
         // 创建AI消息对象
@@ -578,6 +639,7 @@ Page({
           fullContent: '> ' + response, // 保存完整内容用于打字机效果
           isUser: false,
           pauseClass: 'pause-animation-2',
+          isHint: true, // 标记为提示类消息，使用绿色显示
           typingInProgress: this.data.typingConfig.enabled, // 标记打字进行中
           backspaceChanceModifier: backspaceChanceModifier // 添加回退概率修饰符
         };
@@ -607,30 +669,22 @@ Page({
         return;
       }
       
-      // 如果没有猜到答案，继续原有的回复逻辑
-      // 根据问题内容生成回复
-      if (userQuestion.includes('是') && userQuestion.includes('吗')) {
-        // 是否类问题
-        const randomNum = Math.random();
-        if (randomNum < 0.4) {
+      // 如果没有猜到答案，生成随机回复
+      const randomNum = Math.random();
+      
+
+        // 随机回复是、否或不确定
+        if (randomNum < 0.33) {
           response = '是。';
           backspaceChanceModifier = -0.1; // 降低回退概率
-        } else if (randomNum < 0.8) {
+        } else if (randomNum < 0.66) {
           response = '否。';
           backspaceChanceModifier = -0.1; // 降低回退概率
         } else {
           response = '不确定。';
           backspaceChanceModifier = 0; // 保持默认回退概率
         }
-      } else if (userQuestion.includes('提示')) {
-        // 提示请求
-        response = '提示：思考一下"自己"在这个上下文中可能代表什么。';
-        backspaceChanceModifier = 0.1; // 增加回退概率
-      } else {
-        // 其他问题
-        response = '请用是非问题提问，例如"是XX吗？"';
-        backspaceChanceModifier = 0; // 保持默认回退概率
-      }
+      
       
       // 随机选择一个停顿动画类
       const pauseClasses = ['pause-animation-1', 'pause-animation-2', 'pause-animation-3', 'pause-animation-4'];
@@ -852,10 +906,7 @@ Page({
             });
             break;
           case 2: // 分享汤面
-            wx.showShareMenu({
-              withShareTicket: true,
-              menus: ['shareAppMessage', 'shareTimeline']
-            });
+            this.showGetMoreChancesModal();
             break;
           case 3: // 设置
             // 打开设置页面
@@ -883,7 +934,8 @@ Page({
     
     this.setData({
       messageList: [initialMessage],
-      wrongGuessCount: 0
+      wrongGuessCount: 0,
+      currentGuessCount: 0 // 重置当前提问次数
     }, () => {
       // 启动欢迎消息的打字机效果
       setTimeout(() => {
@@ -918,5 +970,128 @@ Page({
         messageList: updatedMessages
       });
     }
-  }
+  },
+
+  /**
+   * 显示获取更多机会的提示框
+   */
+  showGetMoreChancesModal: function() {
+    // 使用wx.showActionSheet来提供多个选项
+    wx.showActionSheet({
+      itemList: ['分享汤面获得10次机会', '观看广告获得10次机会'],
+      success: (res) => {
+        console.log(res.tapIndex);
+        // 根据点击的选项执行不同操作
+        switch(res.tapIndex) {
+          case 0: // 分享汤面
+            this.shareTale();
+            break;
+          case 1: // 观看广告
+            this.watchAd();
+            break;
+        }
+      },
+      fail: (res) => {
+        console.log('用户取消了操作');
+        // 用户取消了操作，可以提示用户只能回到主页或使用其他功能
+        wx.showToast({
+          title: '你可以回到主页或尝试其他功能',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    });
+  },
+
+  /**
+   * 分享汤面
+   */
+  shareTale: function() {
+    // 显示分享菜单
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+      success: () => {
+        console.log('显示分享菜单成功');
+        // 在实际应用中，应该在用户成功分享后才增加次数
+        // 这里为了演示，直接增加次数
+        this.addMoreChances(10);
+      }
+    });
+  },
+  
+  /**
+   * 观看广告
+   */
+  watchAd: function() {
+    // 在实际应用中，这里应该调用微信小程序的广告API
+    // 例如，使用wx.createRewardedVideoAd创建激励视频广告
+    // 这里为了演示，直接模拟观看广告的过程
+    wx.showLoading({
+      title: '加载广告中...',
+    });
+    
+    // 模拟广告加载和播放过程
+    setTimeout(() => {
+      wx.hideLoading();
+      
+      // 模拟用户成功观看完广告
+      wx.showToast({
+        title: '观看完成，获得10次机会',
+        icon: 'success',
+        duration: 2000
+      });
+      
+      // 增加用户的机会次数
+      this.addMoreChances(10);
+    }, 2000);
+  },
+  
+  /**
+   * 增加用户的机会次数
+   * @param {number} count 要增加的次数
+   */
+  addMoreChances: function(count) {
+    // 增加用户的机会次数
+    this.setData({
+      currentGuessCount: this.data.currentGuessCount - count
+    });
+    
+    // 确保currentGuessCount不会小于0
+    if (this.data.currentGuessCount < 0) {
+      this.setData({
+        currentGuessCount: 0
+      });
+    }
+    
+    // 保存更新后的次数到本地存储
+    this.saveMessageHistory();
+    
+    // 提示用户已增加次数
+    wx.showToast({
+      title: `已增加${count}次机会`,
+      icon: 'success',
+      duration: 2000
+    });
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+    // 记录用户已经分享，可以在这里增加用户的机会次数
+    // 注意：微信小程序不能直接检测用户是否真的分享了，只能知道用户点击了分享按钮
+    // 所以在实际应用中，可能需要通过服务器来验证分享行为
+    
+    // 延迟一下再增加次数，模拟分享完成的过程
+    setTimeout(() => {
+      this.addMoreChances(10);
+    }, 1000);
+    
+    return {
+      title: `海龟汤谜题：${this.data.currentSoup.title}`,
+      path: '/pages/main/main',
+      imageUrl: '/images/share-image.png' // 可以替换为实际的分享图片
+    }
+  },
 }) 

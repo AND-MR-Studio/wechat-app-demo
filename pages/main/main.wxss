@@ -232,9 +232,19 @@ page {
 
 /* 提示消息样式 */
 .ai-message.hint-message .message-prefix,
-.ai-message.hint-message .message-text {
+.ai-message.hint-message .message-text,
+.hint-content .message-text {
   color: #5CE821;
   text-shadow: 0 0 3rpx rgba(92, 232, 33, 0.3);
+  font-weight: 500;
+}
+
+/* 没有机会消息样式 */
+.ai-message.no-chance-message .message-prefix,
+.ai-message.no-chance-message .message-text,
+.no-chance-content .message-text {
+  color: #FF4444;
+  text-shadow: 0 0 3rpx rgba(255, 68, 68, 0.3);
   font-weight: 500;
 }
 
@@ -447,6 +457,13 @@ page {
   opacity: 0.8;
 }
 
+/* 输入框包装器 */
+.input-wrapper {
+  flex: 1;
+  position: relative;
+  max-width: 600rpx;
+}
+
 /* 输入框样式 */
 .message-input {
   flex: 1;
@@ -458,7 +475,7 @@ page {
   font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
   color: #FFFFFF;
   box-sizing: border-box;
-  max-width: 600rpx;
+  width: 100%;
   border: 2rpx solid rgba(92, 232, 33, 0.2);
   box-shadow: 0 0 10rpx rgba(92, 232, 33, 0.1) inset;
   transition: all 0.3s ease;

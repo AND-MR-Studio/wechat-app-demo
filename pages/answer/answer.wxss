@@ -16,7 +16,7 @@ page {
 /* 容器样式 */
 .container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   height: 100vh;
   background-color: #061429;
@@ -24,14 +24,28 @@ page {
   padding: 0 40rpx;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  justify-content: flex-start; /* 内容靠上对齐 */
+}
+
+/* 内容区样式 */
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 130rpx; /* 为底部导航留出空间 */
+  flex: 1;
+  justify-content: flex-start; /* 内容靠上对齐 */
+  padding-top: 20rpx; /* 顶部添加一点间距 */
 }
 
 /* 标题区样式 */
 .title-area {
   width: 100%;
   text-align: center;
-  padding-top: 60rpx;
-  margin-bottom: 40rpx;
+  padding-top: 200rpx; /* 减小顶部间距 */
+  margin-bottom: 30rpx; /* 减小底部间距 */
 }
 
 .title {
@@ -48,7 +62,7 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 60rpx;
+  margin-bottom: 40rpx; /* 减小底部间距 */
 }
 
 .answer-card {
@@ -85,6 +99,8 @@ page {
 
 .card-content {
   padding: 40rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .answer-text {
@@ -92,6 +108,11 @@ page {
   line-height: 1.8;
   color: #FFFFFF;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  text-align: left;
+  width: 100%;
+  display: block;
 }
 
 /* 按钮区样式 */
@@ -100,7 +121,7 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 100rpx;
+  margin-bottom: 60rpx; /* 减小底部间距 */
 }
 
 .share-button, .back-button {

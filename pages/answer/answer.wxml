@@ -2,14 +2,14 @@
 <view class="container">
   <!-- 使用统一导航栏组件 -->
   <nav-bar 
-    title="汤底" 
+    title="一日汤" 
     isHomePage="{{false}}" 
     bind:homeclick="onHomeClick"
     bind:moreclick="onMoreClick">
   </nav-bar>
   
   <!-- 内容区 -->
-  <view class="content" style="margin-top: {{statusBarHeight + 44}}px;">
+  <view class="content" style="margin-top: {{statusBarHeight + 24}}px;">
     <!-- 标题区 -->
     <view class="title-area">
       <text class="title">{{soupTitle}}</text>
@@ -30,6 +30,7 @@
     <!-- 操作按钮区 -->
     <view class="button-area">
       <button class="share-button" bindtap="onShareTap">分享汤面</button>
+      <button class="back-button" bindtap="onBackToHomeTap">返回首页</button>
     </view>
   </view>
   

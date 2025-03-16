@@ -34,7 +34,7 @@
           
           <!-- AI消息或思考中状态 -->
           <block wx:if="{{!item.isUser}}">
-            <view class="message-content ai-content {{item.isHint ? 'hint-content' : ''}}">
+            <view class="message-content ai-content {{item.isHint ? 'hint-content' : ''}} {{item.isNoChance ? 'no-chance-content' : ''}}">
               <!-- 思考中状态 -->
               <block wx:if="{{item.isThinking}}">
                 <view class="thinking-dots">
@@ -63,15 +63,17 @@
   
   <!-- 输入操作区 -->
   <view class="input-area">
-    <input class="message-input" 
-           placeholder="输入你的猜测..." 
-           placeholder-class="placeholder"
-           value="{{inputValue}}"
-           bindinput="onInputChange"
-           bindfocus="onInputFocus"
-           bindblur="onInputBlur"
-           confirm-type="send"
-           bindconfirm="sendMessage" />
+    <view class="input-wrapper">
+      <input class="message-input" 
+             placeholder="输入你的问题，你还有{{maxGuessCount - currentGuessCount}}次机会..." 
+             placeholder-class="placeholder"
+             value="{{inputValue}}"
+             bindinput="onInputChange"
+             bindfocus="onInputFocus"
+             bindblur="onInputBlur"
+             confirm-type="send"
+             bindconfirm="sendMessage" />
+    </view>
     <view class="send-button {{inputValue.trim() ? 'active' : 'inactive'}}" bindtap="sendMessage">
       <view class="send-icon {{sending ? 'loading' : ''}}">?</view>
     </view>
