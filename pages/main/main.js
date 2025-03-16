@@ -554,57 +554,82 @@ Page({
     this.addThinkingMessage(thinkingMessage);
     
     // 模拟网络延迟和思考时间
-    const thinkingTime = 1500 + Math.random() * 2000; // 1.5-3.5秒的思考时间
+    const thinkingTime = 1500 + Math.random() * 2000;
     
     setTimeout(() => {
       // 移除思考消息
       this.removeThinkingMessage();
       
-      // 简单的回复逻辑，实际应用中应该调用AI服务
+      // 检查是否猜到了汤底（触发词：汤底）
+      const foundAnswer = userQuestion.includes('汤底');
+      
       let response = '';
-      let isCorrectGuess = false;
-      let backspaceChanceModifier = 0; // 回退概率修饰符
+      let backspaceChanceModifier = 0;
       
-      // 简单的关键词匹配
-      const question = userQuestion.toLowerCase();
-      
-      if (question.includes('吃') || question.includes('食物')) {
-        response = '是。';
-        isCorrectGuess = true;
-        backspaceChanceModifier = -0.2; // 降低回退概率
-      } else if (question.includes('人') || question.includes('自己')) {
-        response = '是。';
-        isCorrectGuess = true;
-        backspaceChanceModifier = -0.2; // 降低回退概率
-      } else if (question.includes('动物')) {
-        response = '是。';
-        isCorrectGuess = true;
-        backspaceChanceModifier = -0.2; // 降低回退概率
-      } else if (question.includes('谜底')) {
-        response = '不是。';
-        backspaceChanceModifier = -0.15; // 稍微降低回退概率
-      } else {
-        // 随机回复
-        const responses = ['是。', '否。', '不确定。'];
-        response = responses[Math.floor(Math.random() * responses.length)];
+      if (foundAnswer) {
+        // 用户猜到了答案
+        response = '你喝到了汤底。';
+        backspaceChanceModifier = -0.1; // 降低回退概率
         
-        // 如果回复是"否"或"不确定"，增加错误计数
-        if (response === '否。') {
-          this.increaseWrongGuessCount();
-          backspaceChanceModifier = -0.15; // 稍微降低回退概率
-        } else if (response === '不确定。') {
-          this.increaseWrongGuessCount();
-          backspaceChanceModifier = 0.1; // 提高回退概率，表示思考
-        } else {
-          // 如果回复是"是"，重置错误计数
-          this.resetWrongGuessCount();
-          backspaceChanceModifier = -0.2; // 降低回退概率
-        }
+        // 创建AI消息对象
+        const aiMessage = {
+          id: Date.now(),
+          content: '> ' + response, // 确保回复以">"开头
+          fullContent: '> ' + response, // 保存完整内容用于打字机效果
+          isUser: false,
+          pauseClass: 'pause-animation-2',
+          typingInProgress: this.data.typingConfig.enabled, // 标记打字进行中
+          backspaceChanceModifier: backspaceChanceModifier // 添加回退概率修饰符
+        };
+        
+        // 将AI消息添加到消息列表
+        this.addMessage(aiMessage);
+        
+        // 延迟一段时间后跳转到汤底页面
+        setTimeout(() => {
+          // 跳转到汤底页面
+          wx.navigateTo({
+            url: '/pages/answer/answer?title=最后是自己',
+            success: () => {
+              console.log('跳转到汤底页面成功');
+            },
+            fail: (error) => {
+              console.error('跳转到汤底页面失败', error);
+            }
+          });
+        }, 2000);
+        
+        // 重置发送状态
+        this.setData({
+          sending: false
+        });
+        
+        return;
       }
       
-      // 如果是正确的猜测，重置错误计数
-      if (isCorrectGuess) {
-        this.resetWrongGuessCount();
+      // 如果没有猜到答案，继续原有的回复逻辑
+      // 根据问题内容生成回复
+      if (userQuestion.includes('是') && userQuestion.includes('吗')) {
+        // 是否类问题
+        const randomNum = Math.random();
+        if (randomNum < 0.4) {
+          response = '是。';
+          backspaceChanceModifier = -0.1; // 降低回退概率
+        } else if (randomNum < 0.8) {
+          response = '否。';
+          backspaceChanceModifier = -0.1; // 降低回退概率
+        } else {
+          response = '不确定。';
+          backspaceChanceModifier = 0; // 保持默认回退概率
+        }
+      } else if (userQuestion.includes('提示')) {
+        // 提示请求
+        response = '提示：思考一下"自己"在这个上下文中可能代表什么。';
+        backspaceChanceModifier = 0.1; // 增加回退概率
+      } else {
+        // 其他问题
+        response = '请用是非问题提问，例如"是XX吗？"';
+        backspaceChanceModifier = 0; // 保持默认回退概率
       }
       
       // 随机选择一个停顿动画类
