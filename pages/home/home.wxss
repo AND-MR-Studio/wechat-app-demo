@@ -57,9 +57,9 @@ page {
 
 .main-title {
   font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
-  font-size: 60rpx;
+  font-size: 48rpx;
   font-weight: bold;
-  color: #FFFFFF;
+  color: #DBFFEC;
   margin-bottom: 60rpx;
   line-height: 1.2;
   opacity: 0;
