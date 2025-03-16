@@ -783,7 +783,7 @@ Page({
     
     // 返回首页
     wx.reLaunch({
-      url: '/pages/login/login',
+      url: '/pages/home/home',
       success: function() {
         console.log('返回首页成功');
       },
@@ -800,7 +800,7 @@ Page({
     console.log('更多按钮被点击');
     // 显示操作菜单
     wx.showActionSheet({
-      itemList: ['重新开始', '保存对话', '分享汤面', '设置'],
+      itemList: ['重新开始', '清除对话', '分享汤面', '设置'],
       success: (res) => {
         console.log(res.tapIndex);
         // 根据点击的选项执行不同操作
@@ -808,11 +808,22 @@ Page({
           case 0: // 重新开始
             this.resetConversation();
             break;
-          case 1: // 保存对话
-            this.saveMessageHistory();
-            wx.showToast({
-              title: '对话已保存',
-              icon: 'success'
+          case 1: // 清除对话
+            wx.showModal({
+              title: '确认清除',
+              content: '确定要清除所有对话记录吗？',
+              success: (res) => {
+                if (res.confirm) {
+                  // 清除本地存储的对话记录
+                  wx.removeStorageSync('messageHistory');
+                  // 重置对话
+                  this.resetConversation();
+                  wx.showToast({
+                    title: '对话已清除',
+                    icon: 'success'
+                  });
+                }
+              }
             });
             break;
           case 2: // 分享汤面
