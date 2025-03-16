@@ -62,7 +62,7 @@
   </scroll-view>
   
   <!-- 输入操作区 -->
-  <view class="input-area">
+  <view class="input-area" style="position: fixed; left: -2rpx; top: 1430rpx">
     <view class="input-wrapper">
       <input class="message-input" 
              placeholder="输入你的问题，你还有{{maxGuessCount - currentGuessCount}}次机会..." 

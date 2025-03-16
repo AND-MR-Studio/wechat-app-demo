@@ -879,24 +879,36 @@ Page({
     console.log('更多按钮被点击');
     // 显示操作菜单
     wx.showActionSheet({
-      itemList: ['重新开始', '清除对话', '分享汤面', '设置'],
+      itemList: ['放弃', '清除对话', '分享汤面', '设置'],
       success: (res) => {
         console.log(res.tapIndex);
         // 根据点击的选项执行不同操作
         switch(res.tapIndex) {
-          case 0: // 重新开始
-            this.resetConversation();
+          case 0: // 放弃
+            wx.showModal({
+              title: '确认放弃',
+              content: '确定要放弃当前对话吗？这不会重置你的机会次数。',
+              success: (res) => {
+                if (res.confirm) {
+                  this.resetConversationWithoutChances();
+                  wx.showToast({
+                    title: '已放弃当前对话',
+                    icon: 'success'
+                  });
+                }
+              }
+            });
             break;
           case 1: // 清除对话
             wx.showModal({
               title: '确认清除',
-              content: '确定要清除所有对话记录吗？',
+              content: '确定要清除所有对话记录吗？这不会重置你的机会次数。',
               success: (res) => {
                 if (res.confirm) {
                   // 清除本地存储的对话记录
                   wx.removeStorageSync('messageHistory');
-                  // 重置对话
-                  this.resetConversation();
+                  // 重置对话但保留机会次数
+                  this.resetConversationWithoutChances();
                   wx.showToast({
                     title: '对话已清除',
                     icon: 'success'
@@ -917,7 +929,43 @@ Page({
   },
   
   /**
-   * 重置对话
+   * 重置对话但保留机会次数
+   */
+  resetConversationWithoutChances: function() {
+    // 保存当前的机会次数
+    const currentChances = this.data.currentGuessCount;
+    
+    // 重置对话到初始状态
+    const initialMessage = {
+      id: 'init-' + Date.now(),
+      content: '', // 初始为空，以便启用打字机效果
+      fullContent: '> 欢迎来到海龟汤游戏。\n> 你需要通过提问来猜测汤底，\n> 我只会回答"是"、"否"或"不确定"。',
+      isUser: false,
+      pauseClass: 'pause-animation-2',
+      isLatest: true,
+      typingInProgress: true,
+      isWelcomeMessage: true
+    };
+    
+    this.setData({
+      messageList: [initialMessage],
+      wrongGuessCount: 0,
+      // 保留当前的机会次数
+      currentGuessCount: currentChances
+    }, () => {
+      // 启动欢迎消息的打字机效果
+      setTimeout(() => {
+        this.simulateTypewriter(initialMessage.id, initialMessage.fullContent);
+      }, 500);
+    });
+    
+    // 清除本地存储的对话记录
+    wx.removeStorageSync('messageHistory');
+  },
+  
+  /**
+   * 重置对话（包括重置机会次数）
+   * 仅在分享获取机会时使用
    */
   resetConversation: function() {
     // 重置对话到初始状态
@@ -946,7 +994,7 @@ Page({
     // 清除本地存储的对话记录
     wx.removeStorageSync('messageHistory');
   },
-  
+
   /**
    * 立即完成所有正在进行的打字效果
    */

@@ -37,7 +37,7 @@
     <!-- 底部图标区 -->
     <view class="footer-area">
       <!-- 煲汤按钮 -->
-      <view class="footer-item {{activeTab === 'cook' ? 'active' : ''}}" bindtap="onCookSoupTap">
+      <view class="footer-item {{activeTab === 'cook' ? 'active' : ''}}" bindtap="onCookSoupTap" style="position: relative; left: 4rpx; top: -22rpx">
         <view class="icon-container">
           <view class="steam-effect"></view>
           <view class="placeholder-icon"></view>
@@ -46,7 +46,7 @@
       </view>
 
       <!-- 喝汤按钮 - 中心位置且默认选中 -->
-      <view class="footer-item drink {{activeTab === 'drink' ? 'active' : ''}}" bindtap="onDrinkSoupTap">
+      <view class="footer-item drink {{activeTab === 'drink' ? 'active' : ''}}" bindtap="onDrinkSoupTap" style="position: relative; left: -2rpx; top: -14rpx">
         <view class="icon-container">
           <view class="steam-effect"></view>
           <image class="soup-icon" src="../../images/soup-icon.png" mode="aspectFit"></image>
@@ -55,7 +55,7 @@
       </view>
 
       <!-- 我的按钮 -->
-      <view class="footer-item {{activeTab === 'my' ? 'active' : ''}}" bindtap="onMyTap">
+      <view class="footer-item {{activeTab === 'my' ? 'active' : ''}}" bindtap="onMyTap" style="position: relative; left: 1rpx; top: -18rpx">
         <view class="icon-container">
           <view class="steam-effect"></view>
           <view class="placeholder-icon"></view>
