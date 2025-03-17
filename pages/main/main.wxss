@@ -3,7 +3,7 @@
 /* 引入字体 */
 @font-face {
   font-family: 'HuiWenMingTi';
-  src: url('https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf') format('truetype');
+  src: url('https://yavin-miniprogram-1322698236.cos.ap-chengdu.myqcloud.com/HuiWenMingChao.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

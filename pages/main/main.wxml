@@ -65,7 +65,7 @@
   <view class="input-area" style="position: fixed; left: -2rpx; top: 1430rpx">
     <view class="input-wrapper">
       <input class="message-input" 
-             placeholder="输入你的问题，你还有{{maxGuessCount - currentGuessCount}}次机会..." 
+             placeholder="{{maxGuessCount - currentGuessCount > 10 ? '输入你的问题...' : '输入你的问题，你还有' + (maxGuessCount - currentGuessCount) + '次机会...'}}" 
              placeholder-class="placeholder"
              value="{{inputValue}}"
              bindinput="onInputChange"

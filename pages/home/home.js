@@ -151,7 +151,7 @@ Page({
     // 尝试加载自定义字体
     wx.loadFontFace({
       family: 'HuiWenMingTi',
-      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf")',
+      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-chengdu.myqcloud.com/HuiWenMingChao.ttf")',
       success: (res) => {
         console.log('字体加载成功', res);
         this.setData({

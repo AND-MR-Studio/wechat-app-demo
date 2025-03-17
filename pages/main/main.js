@@ -36,7 +36,7 @@ Page({
     // 连续猜错或不确定的次数
     wrongGuessCount: 0,
     // 最大提问次数
-    maxGuessCount: 10,
+    maxGuessCount: 50,
     // 当前提问次数
     currentGuessCount: 0,
     // 提示列表
@@ -79,7 +79,8 @@ Page({
     
     // 初始化提问次数
     this.setData({
-      currentGuessCount: 0
+      currentGuessCount: 0,
+      maxGuessCount: 50
     });
     
     // 页面加载时自动滚动到底部
@@ -167,9 +168,13 @@ Page({
         // 计算用户消息数量作为已使用的提问次数
         const userMessageCount = messageHistory.filter(item => item.isUser).length;
         
+        // 从本地存储中获取当前提问次数，如果没有则使用计算的用户消息数量
+        const storedGuessCount = wx.getStorageSync('currentGuessCount');
+        const currentGuessCount = storedGuessCount !== '' ? storedGuessCount : userMessageCount;
+        
         this.setData({
           messageList: updatedList,
-          currentGuessCount: userMessageCount
+          currentGuessCount: currentGuessCount
         });
       }
     } catch (e) {
@@ -185,6 +190,9 @@ Page({
       // 过滤掉思考中的消息
       const messageToSave = this.data.messageList.filter(item => !item.isThinking);
       wx.setStorageSync('messageHistory', messageToSave);
+      
+      // 保存当前提问次数
+      wx.setStorageSync('currentGuessCount', this.data.currentGuessCount);
     } catch (e) {
       console.error('保存对话记录失败', e);
     }
@@ -815,7 +823,7 @@ Page({
     // 尝试加载自定义字体
     wx.loadFontFace({
       family: 'HuiWenMingTi',
-      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-guangzhou.myqcloud.com/HuiWenMingChao.ttf")',
+      source: 'url("https://yavin-miniprogram-1322698236.cos.ap-chengdu.myqcloud.com/HuiWenMingChao.ttf")',
       success: (res) => {
         console.log('字体加载成功', res);
         // 应用惊悚风格
@@ -1137,7 +1145,7 @@ Page({
     }, 1000);
     
     return {
-      title: `你能猜到吗：${this.data.currentSoup.title}`,
+      title: `你能猜到吗，谜底是：${this.data.currentSoup.title}`,
       path: '/pages/main/main',
       imageUrl: '/images/share-image.png' // 可以替换为实际的分享图片
     }
