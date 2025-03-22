@@ -1,0 +1,293 @@
+/* answer.wxss */
+
+/* 引入字体 */
+@font-face {
+  font-family: 'HuiWenMingTi';
+  src: url('https://yavin-miniprogram-1322698236.cos.ap-chengdu.myqcloud.com/HuiWenMingChao.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+page {
+  background-color: #061429;
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+}
+
+/* 容器样式 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #061429;
+  box-sizing: border-box;
+  padding: 0 40rpx;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  justify-content: flex-start; /* 内容靠上对齐 */
+}
+
+/* 内容区样式 */
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 130rpx; /* 为底部导航留出空间 */
+  flex: 1;
+  justify-content: flex-start; /* 内容靠上对齐 */
+  padding-top: 20rpx; /* 顶部添加一点间距 */
+}
+
+/* 标题区样式 */
+.title-area {
+  width: 100%;
+  text-align: center;
+  padding-top: 200rpx; /* 减小顶部间距 */
+  margin-bottom: 30rpx; /* 减小底部间距 */
+}
+
+.title {
+  font-family: 'HuiWenMingTi', "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  line-height: 1.4;
+}
+
+/* 汤底内容区样式 */
+.answer-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40rpx; /* 减小底部间距 */
+}
+
+.answer-card {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.3);
+  border: 1rpx solid rgba(92, 232, 33, 0.2);
+  animation: card-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes card-glow {
+  0% {
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 8rpx 30rpx rgba(92, 232, 33, 0.3);
+  }
+}
+
+.card-header {
+  padding: 30rpx;
+  background-color: rgba(92, 232, 33, 0.1);
+  border-bottom: 1rpx solid rgba(92, 232, 33, 0.2);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #5CE821;
+  text-shadow: 0 0 10rpx rgba(92, 232, 33, 0.3);
+}
+
+.card-content {
+  padding: 40rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.answer-text {
+  font-size: 30rpx;
+  line-height: 1.8;
+  color: #FFFFFF;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+
+/* 按钮区样式 */
+.button-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx; /* 减小底部间距 */
+}
+
+.share-button, .back-button {
+  width: 320rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  line-height: 88rpx;
+  text-align: center;
+  border: none;
+  margin-bottom: 30rpx;
+}
+
+.share-button {
+  background: linear-gradient(270deg, #5CE821 0%, #82FA4E 100%);
+  box-shadow: 0 8rpx 20rpx 0 rgba(92, 232, 33, 0.3);
+  color: #061429;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8rpx 20rpx 0 rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.share-button::after, .back-button::after {
+  border: none;
+}
+
+/* 底部图标区样式 */
+.footer-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 130rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #061429;
+  box-shadow: 0 -10rpx 25rpx -5rpx rgba(92, 232, 33, 0.12);
+  z-index: 10;
+  overflow: hidden; /* 防止发光效果溢出 */
+}
+
+.footer-area::before {
+  content: '';
+  position: absolute;
+  top: -30rpx;
+  left: 0;
+  right: 0;
+  height: 30rpx;
+  background: linear-gradient(to bottom, rgba(92, 232, 33, 0), rgba(92, 232, 33, 0.05) 60%, rgba(92, 232, 33, 0.08));
+  opacity: 0.8;
+}
+
+/* 底部按钮项 */
+.footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* 喝汤按钮特殊样式 - 更醒目 */
+.footer-item.drink {
+  flex: 1.2;
+}
+
+/* 图标容器 */
+.icon-container {
+  position: relative;
+  width: 64rpx;
+  height: 64rpx;
+  margin-bottom: 6rpx; /* 减小图标和文字的间距 */
+  transition: transform 0.3s ease;
+}
+
+/* 选中状态的图标容器 - 悬浮放大效果 */
+.footer-item.active .icon-container {
+  transform: translateY(-6rpx) scale(1.1);
+}
+
+/* 占位图标 - 简化样式，不使用边框 */
+.placeholder-icon {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  opacity: 0.6;
+}
+
+.soup-icon {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+/* 选中状态的文字 */
+.footer-item.active .footer-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* 喝汤按钮的文字 */
+.footer-item.drink .footer-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+}
+
+/* 发光效果 - 默认隐藏 */
+.steam-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70rpx; /* 缩小发光范围 */
+  height: 70rpx; /* 缩小发光范围 */
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(92, 232, 33, 0.3) 0%, rgba(92, 232, 33, 0) 70%);
+  animation: pulsate 4s ease-in-out infinite;
+  z-index: 1;
+  opacity: 0;
+  display: none;
+}
+
+/* 选中状态的发光效果 */
+.footer-item.active .steam-effect {
+  opacity: 1;
+  display: block;
+}
+
+/* 喝汤按钮的发光效果 - 更强烈但不溢出 */
+.footer-item.drink .steam-effect {
+  width: 80rpx;
+  height: 80rpx;
+  background: radial-gradient(circle, rgba(92, 232, 33, 0.4) 0%, rgba(92, 232, 33, 0) 70%);
+}
+
+/* 动画效果 */
+@keyframes pulsate {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.3;
+  }
+} 

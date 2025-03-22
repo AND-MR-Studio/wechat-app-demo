@@ -1,0 +1,76 @@
+<!-- login.wxml -->
+<view class="container">
+  <!-- 使用统一导航栏组件 -->
+  <nav-bar 
+    title="用户登录" 
+    isHomePage="{{false}}" 
+    bind:homeclick="onHomeClick">
+  </nav-bar>
+  
+  <!-- 登录内容区 -->
+  <view class="content" style="margin-top: {{statusBarHeight + 44}}px;">
+    <!-- 标题 -->
+    <view class="title-area">
+      <text class="title">一勺海龟汤·用户登录</text>
+    </view>
+
+    <!-- 表单区域 -->
+    <view class="form-area">
+      <!-- 错误信息 -->
+      <view class="error-msg" wx:if="{{errorMsg}}">
+        <text>{{errorMsg}}</text>
+      </view>
+      
+      <!-- 用户名输入框 -->
+      <view class="input-item">
+        <text class="input-label">用户名</text>
+        <input 
+          class="input-field" 
+          type="text" 
+          placeholder="请输入用户名" 
+          placeholder-class="placeholder" 
+          bindinput="onInputUsername"
+          value="{{username}}"
+        />
+      </view>
+      
+      <!-- 密码输入框 -->
+      <view class="input-item">
+        <text class="input-label">密码</text>
+        <input 
+          class="input-field" 
+          type="password" 
+          placeholder="请输入密码" 
+          placeholder-class="placeholder" 
+          bindinput="onInputPassword"
+          value="{{password}}"
+        />
+      </view>
+      
+      <!-- 忘记密码 -->
+      <view class="forget-password">
+        <text bindtap="onForgetPasswordTap">忘记密码？</text>
+      </view>
+      
+      <!-- 登录按钮 -->
+      <button 
+        class="login-button {{isLoggingIn ? 'logging-in' : ''}}" 
+        bindtap="onLoginTap" 
+        disabled="{{isLoggingIn}}"
+      >
+        {{isLoggingIn ? '登录中...' : '登录'}}
+      </button>
+      
+      <!-- 注册提示 -->
+      <view class="register-tip">
+        <text>还没有账号？</text>
+        <text class="register-link" bindtap="onRegisterTap">立即注册</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部区域 -->
+  <view class="footer">
+    <text>一勺海龟汤 © 2023</text>
+  </view>
+</view>

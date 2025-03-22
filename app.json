@@ -1,12 +1,15 @@
 {
   "pages": [
+    "pages/home/home",
+    "pages/main/main",
+    "pages/answer/answer",
     "pages/index/index",
     "pages/logs/logs"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "一勺海龟汤",
+    "navigationBarBackgroundColor": "#061429"
   },
   "style": "v2",
   "componentFramework": "glass-easel",

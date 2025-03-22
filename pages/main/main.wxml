@@ -1,0 +1,81 @@
+<!-- main.wxml -->
+<view class="container">
+  <!-- 使用统一导航栏组件 -->
+  <nav-bar 
+    title="一勺海龟汤" 
+    show-home="{{true}}" 
+    bind:homeclick="onHomeClick"
+    bind:moreclick="onMoreClick">
+  </nav-bar>
+  
+  <!-- 背景层 - 模糊的文字背景 -->
+  <view class="background-layer">
+    <view class="background-text">
+      <text>一开始是动物，</text>
+      <text>然后是同类的尸体，</text>
+      <text>接着是同类，</text>
+      <text>最后是自己。</text>
+    </view>
+  </view>
+
+  <!-- 对话内容区 -->
+  <scroll-view class="chat-container" scroll-y="true" scroll-into-view="{{scrollToMessage}}" scroll-with-animation="true" enhanced="true" bounces="true">
+    <!-- 消息列表 -->
+    <scroll-view scroll-y="true" scroll-into-view="{{scrollToMessage}}" class="message-list">
+      <block wx:for="{{messageList}}" wx:key="id">
+        <view id="msg-{{item.id}}" class="message {{item.isUser ? 'user-message' : 'ai-message'}}">
+          <!-- 用户消息 -->
+          <block wx:if="{{item.isUser}}">
+            <view class="message-content user-content">
+              <!-- 使用text组件保持原有换行并允许长按复制 -->
+              <text selectable="true" class="message-text">{{item.content}}</text>
+            </view>
+          </block>
+          
+          <!-- AI消息或思考中状态 -->
+          <block wx:if="{{!item.isUser}}">
+            <view class="message-content ai-content {{item.isHint ? 'hint-content' : ''}} {{item.isNoChance ? 'no-chance-content' : ''}}">
+              <!-- 思考中状态 -->
+              <block wx:if="{{item.isThinking}}">
+                <view class="thinking-dots">
+                  <view class="dot"></view>
+                  <view class="dot"></view>
+                  <view class="dot"></view>
+                </view>
+              </block>
+              
+              <!-- 普通AI消息 -->
+              <block wx:else>
+                <text 
+                  selectable="true" 
+                  class="message-text {{item.typingInProgress ? 'typing-animation ' + item.pauseClass : ''}} {{item.glitching ? 'text-glitch' : ''}}" 
+                  data-text="{{item.content}}">{{item.content}}</text>
+              </block>
+            </view>
+          </block>
+        </view>
+      </block>
+      
+      <!-- 底部留白区域，用于消息滚动定位 -->
+      <view id="message-bottom" style="height: 20px;"></view>
+    </scroll-view>
+  </scroll-view>
+  
+  <!-- 输入操作区 -->
+  <view class="input-area" style="position: fixed; left: -2rpx; top: 1430rpx">
+    <view class="input-wrapper">
+      <input class="message-input" 
+             placeholder="{{maxGuessCount - currentGuessCount > 10 ? '输入你的问题...' : '输入你的问题，你还有' + (maxGuessCount - currentGuessCount) + '次机会...'}}" 
+             placeholder-class="placeholder"
+             value="{{inputValue}}"
+             bindinput="onInputChange"
+             bindfocus="onInputFocus"
+             bindblur="onInputBlur"
+             confirm-type="send"
+             bindconfirm="sendMessage" />
+    </view>
+    <view class="send-button {{inputValue.trim() ? 'active' : 'inactive'}}" bindtap="sendMessage">
+      <view class="send-icon {{sending ? 'loading' : ''}}">?</view>
+    </view>
+  </view>
+</view> 
